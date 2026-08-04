@@ -5,56 +5,315 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>K-Beauty & Cosmética - Gestión de Inventario</title>
     
+    <!-- Fuentes y CDN -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    
-    <!-- SweetAlert2 -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        * { box-sizing: border-box; }
-        body { font-family: 'Poppins', sans-serif; background-color: #fdf8f7; color: #4a3f3c; margin: 0; padding: 20px; }
-        .container { max-width: 1000px; margin: 0 auto; }
-        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid #f5ebe9; }
-        h1 { font-size: 1.8rem; color: #7d6660; margin: 0; }
-        h2 { font-size: 1.3rem; color: #7d6660; margin-top: 0; margin-bottom: 15px; border-bottom: 2px solid #f3d1cb; padding-bottom: 5px; }
-        
-        .btn-icon { font-size: 1.2rem; text-decoration: none; margin-right: 8px; display: inline-block; transition: transform 0.2s; cursor: pointer; }
-        .btn-icon:hover { transform: scale(1.2); }
-        .venta-tabla, table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; }
-        .venta-tabla th, .venta-tabla td, table th, table td { border: 1px solid #f5ebe9; padding: 10px; text-align: left; }
-        .venta-tabla th, table th { background-color: #fffaf9; color: #7d6660; }
-        
-        .total-box { font-size: 1.4rem; font-weight: 600; color: #6b534c; text-align: right; margin-top: 10px; padding: 10px; background: #fffaf9; border-radius: 8px; }
-        .row-agregar { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 15px; flex-wrap: wrap; }
-        .form-group-row { display: flex; gap: 15px; flex-wrap: wrap; }
-        .form-group { display: flex; flex-direction: column; flex: 1; min-width: 200px; margin-bottom: 15px; }
-        .form-group label { font-size: 0.85rem; font-weight: 600; color: #7d6660; margin-bottom: 5px; }
-        
-        input, select, textarea { padding: 10px; border: 1px solid #f3d1cb; border-radius: 8px; font-family: 'Poppins', sans-serif; font-size: 0.95rem; outline: none; }
-        input:focus, select:focus, textarea:focus { border-color: #dca397; }
-        
-        .btn-agregar-lista, .btn-submit { background-color: #dca397; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.3s; width: 100%; font-size: 1rem; }
-        .btn-agregar-lista { width: auto; }
-        .btn-agregar-lista:hover, .btn-submit:hover { background-color: #c98e82; }
+        /* CSS Unificado y Estilizado */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-        /* Navigation Header Bar */
-        .main-header { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 10px; text-align: center; }
-        .header-nav { margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-        .header-nav a { color: #7d6660; text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 6px 14px; border-radius: 15px; background-color: #fffaf9; border: 1px solid #f3d1cb; transition: all 0.2s; }
-        .header-nav a:hover { background-color: #f3d1cb; color: #fff; }
-        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fdf8f7;
+            color: #4a3f3c;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Encabezado */
+        .main-header {
+            text-align: center;
+            padding: 25px 15px;
+            margin-bottom: 25px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(220, 163, 151, 0.12);
+            border: 1px solid #f5ebe9;
+        }
+
+        .main-header h1 {
+            font-size: 1.9rem;
+            color: #7d6660;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .header-nav a {
+            color: #7d6660;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.88rem;
+            padding: 8px 18px;
+            border-radius: 20px;
+            background-color: #fffaf9;
+            border: 1px solid #f3d1cb;
+            transition: all 0.25s ease;
+        }
+
+        .header-nav a:hover {
+            background-color: #dca397;
+            color: #ffffff;
+            border-color: #dca397;
+            box-shadow: 0 3px 8px rgba(220, 163, 151, 0.3);
+        }
+
+        /* Tarjetas */
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+            border: 1px solid #f5ebe9;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            color: #7d6660;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f3d1cb;
+            padding-bottom: 8px;
+            font-weight: 600;
+        }
+
+        /* Métricas / Resumen */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            text-align: center;
+        }
+
+        .stat-card {
+            background: #fffaf9;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #f5ebe9;
+        }
+
+        .stat-card p {
+            font-size: 0.85rem;
+            color: #7d6660;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        /* Formularios */
+        .form-group-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #7d6660;
+            margin-bottom: 6px;
+        }
+
+        input, select, textarea {
+            padding: 11px 14px;
+            border: 1px solid #f3d1cb;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.92rem;
+            background-color: #fff;
+            color: #4a3f3c;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #dca397;
+            box-shadow: 0 0 0 3px rgba(220, 163, 151, 0.2);
+        }
+
+        /* Botones */
+        .btn-submit, .btn-agregar-lista {
+            background-color: #dca397;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 10px rgba(220, 163, 151, 0.25);
+            width: 100%;
+        }
+
+        .btn-agregar-lista {
+            width: auto;
+            height: 45px;
+            align-self: flex-end;
+        }
+
+        .btn-submit:hover, .btn-agregar-lista:hover {
+            background-color: #c98e82;
+            transform: translateY(-1px);
+        }
+
+        /* Tablas */
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #f5ebe9;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background-color: #fffaf9;
+            color: #7d6660;
+            font-weight: 600;
+            border-bottom: 2px solid #f5ebe9;
+        }
+
+        td {
+            border-bottom: 1px solid #f5ebe9;
+            background: #ffffff;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge-categoria {
+            background-color: #f3d1cb;
+            color: #6b534c;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .subcategoria-texto {
+            color: #8a736d;
+            font-size: 0.78rem;
+            display: block;
+            margin-top: 3px;
+        }
+
+        .btn-icon {
+            font-size: 1.1rem;
+            text-decoration: none;
+            margin-right: 8px;
+            display: inline-block;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-icon:hover {
+            transform: scale(1.25);
+        }
+
+        .total-box {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #6b534c;
+            text-align: right;
+            margin-top: 15px;
+            padding: 12px 18px;
+            background: #fffaf9;
+            border-radius: 10px;
+            border: 1px dashed #f3d1cb;
+        }
+
         /* Modal */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center; }
-        .modal-content { background-color: white; padding: 20px; border-radius: 12px; max-width: 450px; width: 90%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; text-align: center; }
-        .close-modal { position: absolute; top: 10px; right: 15px; font-size: 1.5rem; cursor: pointer; color: #7d6660; }
-        .modal-img { max-width: 150px; height: 150px; border-radius: 8px; margin: 0 auto 15px; background: #eee; display: block; object-fit: cover; }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.35);
+            backdrop-filter: blur(3px);
+            justify-content: center;
+            align-items: center;
+        }
 
-        .modal-scroll-caracteristicas { width: 100%; max-height: 120px; overflow-y: auto; background-color: #fcf9f8; padding: 10px; border-radius: 8px; border: 1px solid #e6dbd8; text-align: left; margin-top: 8px; font-size: 0.9rem; white-space: pre-line; }
-        .badge-categoria { background-color: #f3d1cb; color: #7d6660; padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: inline-block; }
-        .subcategoria-texto { color: #8a736d; font-size: 0.8rem; display: block; margin-top: 2px; }
-        .table-responsive { overflow-x: auto; }
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 16px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            position: relative;
+            text-align: center;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: #7d6660;
+        }
+
+        .modal-scroll-caracteristicas {
+            width: 100%;
+            max-height: 120px;
+            overflow-y: auto;
+            background-color: #fcf9f8;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #e6dbd8;
+            text-align: left;
+            margin-top: 8px;
+            font-size: 0.88rem;
+            white-space: pre-line;
+        }
     </style>
 </head>
 <body>
@@ -72,36 +331,34 @@
     <div class="container">
         
         <!-- Resumen del Negocio -->
-        <section id="sec-resumen" class="card stats-section" style="background-color: #fffaf9; border-color: #f3d1cb;">
+        <section id="sec-resumen" class="card">
             <h2>Resumen del Negocio 📈</h2>
-            <div class="form-group-row" style="justify-content: space-around; text-align: center;">
-                <div style="flex: 1; padding: 10px;">
-                    <p style="font-size: 0.85rem; color: #7d6660; font-weight: 600; margin: 0;">Total de Ventas</p>
-                    <span id="stat-ventas" style="font-size: 1.8rem; font-weight: 600; color: #7a9e9f;">0</span>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <p>Total de Ventas</p>
+                    <span id="stat-ventas" class="stat-number" style="color: #7a9e9f;">0</span>
                 </div>
-
-                <div style="flex: 1; padding: 10px; border-left: 1px solid #f5ebe9; border-right: 1px solid #f5ebe9;">
-                    <p style="font-size: 0.85rem; color: #7d6660; font-weight: 600; margin: 0;">Caja Total Recaudada</p>
-                    <span id="stat-caja" style="font-size: 1.8rem; font-weight: 600; color: #6b534c;">$0</span>
+                <div class="stat-card">
+                    <p>Caja Total Recaudada</p>
+                    <span id="stat-caja" class="stat-number" style="color: #6b534c;">$0</span>
                 </div>
-
-                <div style="flex: 1; padding: 10px;">
-                    <p style="font-size: 0.85rem; color: #7d6660; font-weight: 600; margin: 0;">Productos Sin Stock</p>
-                    <span id="stat-sin-stock" style="font-size: 1.8rem; font-weight: 600; color: #dca397;">0</span>
+                <div class="stat-card">
+                    <p>Productos Sin Stock</p>
+                    <span id="stat-sin-stock" class="stat-number" style="color: #dca397;">0</span>
                 </div>
             </div>
         </section>
 
         <!-- Registrar Nueva Venta -->
-        <section id="sec-venta" class="card sales-section">
+        <section id="sec-venta" class="card">
             <h2>Registrar Nueva Venta 🛍️</h2>
             <form id="form-ventas-multiples">
-                <div class="row-agregar">
-                    <div class="form-group" style="flex: 2; margin-bottom: 0;">
+                <div class="form-group-row">
+                    <div class="form-group" style="flex: 3;">
                         <label for="producto_buscar">Buscar Producto (Nombre o marca)</label>
                         <input type="text" id="producto_buscar" list="lista_productos" placeholder="Escribí para buscar... Ej: COSRX" autocomplete="off">
                     </div>
-                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                    <div class="form-group" style="flex: 1;">
                         <label for="cantidad">Cantidad</label>
                         <input type="number" id="cantidad" min="1" value="1">
                     </div>
@@ -111,7 +368,7 @@
                 <datalist id="lista_productos"></datalist>
 
                 <div class="table-responsive">
-                    <table class="venta-tabla" id="tabla-carrito">
+                    <table id="tabla-carrito">
                         <thead>
                             <tr>
                                 <th>Producto</th>
@@ -129,12 +386,12 @@
                     Total Operación: $<span id="monto-total-venta">0</span>
                 </div>
 
-                <button type="submit" class="btn-submit" style="margin-top: 15px;">Finalizar y Registrar Venta</button>
+                <button type="submit" class="btn-submit" style="margin-top: 20px;">Finalizar y Registrar Venta</button>
             </form>
         </section>
 
         <!-- Registrar Nuevo Cosmético -->
-        <section id="sec-nuevo-producto" class="card form-section">
+        <section id="sec-nuevo-producto" class="card">
             <h2>Registrar Nuevo Cosmético 💄</h2>
             <form id="form-nuevo-producto">
                 <div class="form-group-row">
@@ -196,7 +453,7 @@
         </section>
 
         <!-- Inventario Actual -->
-        <section id="sec-inventario" class="card table-section">
+        <section id="sec-inventario" class="card">
             <h2>Inventario Actual 📦</h2>
             <div class="table-responsive">
                 <table id="tabla-inventario">
@@ -221,8 +478,7 @@
     <div id="modal-detalles" class="modal">
         <div class="modal-content">
             <span class="close-modal" id="btn-close-modal">&times;</span>
-            <h2 id="modal-titulo-prod">Nombre Producto</h2>
-            <img id="modal-img-prod" src="https://via.placeholder.com/150?text=K-Beauty" alt="Foto del Producto" class="modal-img">
+            <h2 id="modal-titulo-prod" style="border:none; margin-bottom:10px;">Nombre Producto</h2>
             <p><strong>Marca:</strong> <span id="modal-marca-prod"></span></p>
             <p><strong>Precio Venta:</strong> $<span id="modal-precio-prod"></span></p>
             <p><strong>Stock Disponible:</strong> <span id="modal-stock-prod"></span> u.</p>
