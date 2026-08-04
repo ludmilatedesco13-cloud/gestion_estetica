@@ -5,61 +5,252 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>K-Beauty & Cosmética - Gestión de Inventario</title>
     
-    <link rel="stylesheet" href="css/estilos.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     
-    <!-- SweetAlert2 -->
+    <!-- SweetAlert2 para alertas bonitas -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6; /* espacio entre líneas de todo el sitio */
+        }
+
+        body {
+            background-color: #fcf6f5;
+            color: #4a4a4a;
+            padding-bottom: 80px; /* Más espacio al final de la página */
+        }
+
+        /* Encabezado */
+        .main-header {
+            background-color: #f3d1cb;
+            color: #4a3b32;
+            text-align: center;
+            padding: 40px 20px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 50px; /* separación con el contenido */
+        }
+
+        .main-header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: 1px; /* Separación entre letras */
+        }
+
+        /* Menú de navegación superior */
+        .header-nav {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .header-nav a {
+            color: #7d6660;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 6px 16px;
+            border-radius: 20px;
+            background-color: #fffaf9;
+            border: 1px solid #e6dbd8;
+            transition: all 0.2s;
+        }
+
+        .header-nav a:hover {
+            background-color: #6b534c;
+            color: #fff;
+            border-color: #6b534c;
+        }
+
+        /* Contenedor Principal */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 25px; 
+            display: flex;
+            flex-direction: column;
+            gap: 45px; 
+        }
+
+        .top-row {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .top-row .card {
+            flex: 0 1 calc(33.333% - 14px);
+            max-width: calc(33.333% - 14px);
+            min-width: 280px;
+        }
+
+        /* Tarjetas (Cards) */
+        .card {
+            background: #ffffff;
+            border-radius: 16px; /* Bordes suaves */
+            padding: 24px; /* padding interior */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
+            border: 1px solid #f0e4e2;
+        }
+
+        @media (max-width: 1100px) {
+            .top-row .card {
+                flex: 1 1 45%;
+                max-width: 45%;
+            }
+        }
+
+        @media (max-width: 820px) {
+            .top-row .card {
+                flex: 1 1 100%;
+                max-width: 100%;
+            }
+        }
+
+        .card h2 {
+            font-size: 1.5rem; /* Título grande */
+            color: #6b534c;
+            margin-bottom: 30px; /* Mucha más separación con el formulario/tabla */
+            border-bottom: 2px solid #fbf0ee;
+            padding-bottom: 15px; /* Más padding en el borde inferior */
+        }
+
+        /* Formularios */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 25px; /* Más espacio vertical entre grupos de input */
+            flex: 1;
+        }
+
+        .form-group label {
+            font-size: 1rem; /* Label grande */
+            margin-bottom: 10px; /* separación label-input */
+            font-weight: 600;
+            color: #7d6660;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 14px 18px; /* Inputs grandes y cómodos */
+            border: 1px solid #ddd1cf;
+            border-radius: 10px; /* Bordes redondeados */
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #f3d1cb;
+            box-shadow: 0 0 8px rgba(243, 209, 203, 0.6);
+        }
+
+        /* Filas del formulario */
+        .form-group-row {
+            display: flex;
+            gap: 25px; /* separación horizontal entre inputs contiguos */
+            flex-wrap: wrap;
+            margin-bottom: 10px; 
+        }
+
+        /* Botón */
+        .btn-submit {
+            background-color: #dca397;
+            color: white;
+            border: none;
+            padding: 16px 25px; /* Botón grande */
+            font-size: 1.1rem; /* Texto grande */
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+            margin-top: 25px; /* Separación con el último input */
+            letter-spacing: 1px;
+        }
+
+        .btn-submit:hover {
+            background-color: #ca8f83;
+        }
+
+        /* Tablas */
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 15px; /* Espacio arriba de la tabla */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1rem;
+        }
+
+        table th {
+            background-color: #fbf0ee;
+            color: #7d6660;
+            padding: 18px 20px; /* Aumento el padding en cabeceras */
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #f5ebe9;
+        }
+
+        table td {
+            padding: 18px 20px; /* Aumento el padding en las celdas de datos */
+            border-bottom: 1px solid #f5ebe9;
+        }
+
+        table tr:hover {
+            background-color: #fffaf9;
+        }
+
+        /* Etiquetas (Badges) */
+        .badge {
+            padding: 6px 12px; /* Badges grandes */
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-kbeauty {
+            background-color: #e4f0ec;
+            color: #3b7a66;
+        }
+
+        .badge-normal {
+            background-color: #eaeaea;
+            color: #666666;
+        }
+
+        /* Estilos adicionales de la app (Botones de acción, carrito, modal) */
         .btn-icon { font-size: 1.2rem; text-decoration: none; margin-right: 8px; display: inline-block; transition: transform 0.2s; cursor: pointer; }
         .btn-icon:hover { transform: scale(1.2); }
         .venta-tabla { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; }
-        .venta-tabla th, .venta-tabla td { border: 1px solid #f5ebe9; padding: 10px; text-align: left; }
+        .venta-tabla th, .venta-tabla td { border: 1px solid #f5ebe9; padding: 12px 15px; text-align: left; }
         .venta-tabla th { background-color: #fffaf9; color: #7d6660; }
-        .total-box { font-size: 1.4rem; font-weight: 600; color: #6b534c; text-align: right; margin-top: 10px; padding: 10px; background: #fffaf9; border-radius: 8px; }
-        .row-agregar { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 15px; }
-        .btn-agregar-lista { background-color: #dca397; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
-        .btn-agregar-lista:hover { background-color: #c98e82; }
+        .total-box { font-size: 1.4rem; font-weight: 600; color: #6b534c; text-align: right; margin-top: 15px; padding: 12px 15px; background: #fffaf9; border-radius: 8px; border: 1px solid #f0e4e2; }
+        .row-agregar { display: flex; gap: 15px; align-items: flex-end; margin-bottom: 15px; }
+        .btn-agregar-lista { background-color: #dca397; color: white; border: none; padding: 14px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: background 0.3s; height: 52px; font-size: 1rem; }
+        .btn-agregar-lista:hover { background-color: #ca8f83; }
 
-        /* Navigation Header Bar */
-        .main-header { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 10px; }
-        .header-nav { margin-top: 10px; display: flex; gap: 15px; }
-        .header-nav a { color: #7d6660; text-decoration: none; font-weight: 600; font-size: 0.95rem; padding: 5px 12px; border-radius: 15px; background-color: #fffaf9; border: 1px solid #f3d1cb; transition: all 0.2s; }
-        .header-nav a:hover { background-color: #f3d1cb; color: #fff; }
-        
-        /* Modal para la lupita */
+        /* Modal */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center; }
-        .modal-content { background-color: white; padding: 20px; border-radius: 12px; max-width: 450px; width: 90%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; text-align: center; }
-        .close-modal { position: absolute; top: 10px; right: 15px; font-size: 1.5rem; cursor: pointer; color: #7d6660; }
-        .modal-img { max-width: 150px; height: auto; border-radius: 8px; margin-bottom: 15px; background: #eee; display: block; margin-left: auto; margin-right: auto; object-fit: cover; }
-
-        /* Contenedor con scroll para las características */
-        .modal-scroll-caracteristicas {
-            width: 100%;
-            max-height: 140px;
-            overflow-y: auto;
-            background-color: #fcf9f8;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #e6dbd8;
-            box-sizing: border-box;
-            text-align: left;
-            margin-top: 8px;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            color: #4a3f3c;
-            white-space: pre-line;
-        }
-
-        .modal-scroll-caracteristicas::-webkit-scrollbar { width: 6px; }
-        .modal-scroll-caracteristicas::-webkit-scrollbar-thumb { background-color: #7d6660; border-radius: 10px; }
-        .modal-scroll-caracteristicas::-webkit-scrollbar-track { background: #f1f1f1; }
-
-        .badge-categoria { background-color: #f3d1cb; color: #7d6660; padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; display: inline-block; }
-        .subcategoria-texto { color: #8a736d; font-size: 0.8rem; display: block; margin-top: 2px; }
+        .modal-content { background-color: white; padding: 25px; border-radius: 16px; max-width: 450px; width: 90%; box-shadow: 0 6px 20px rgba(0,0,0,0.15); position: relative; text-align: center; border: 1px solid #f0e4e2; }
+        .close-modal { position: absolute; top: 12px; right: 18px; font-size: 1.5rem; cursor: pointer; color: #7d6660; font-weight: bold; }
+        .modal-img { max-width: 140px; height: 140px; border-radius: 8px; margin-bottom: 15px; background: #eee; display: block; margin-left: auto; margin-right: auto; object-fit: cover; border: 1px solid #f0e4e2; }
+        .modal-scroll-caracteristicas { width: 100%; max-height: 130px; overflow-y: auto; background-color: #fcf9f8; padding: 12px; border-radius: 8px; border: 1px solid #e6dbd8; box-sizing: border-box; text-align: left; margin-top: 8px; font-size: 0.95rem; line-height: 1.5; color: #4a3f3c; white-space: pre-line; }
+        .badge-categoria { background-color: #f3d1cb; color: #7d6660; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; display: inline-block; }
+        .subcategoria-texto { color: #8a736d; font-size: 0.8rem; display: block; margin-top: 3px; }
     </style>
 </head>
 <body>
@@ -77,9 +268,9 @@
     <div class="container">
         
         <!-- Resumen del Negocio -->
-        <section id="sec-resumen" class="card stats-section" style="background-color: #fffaf9; border-color: #f3d1cb;">
+        <section id="sec-resumen" class="card stats-section">
             <h2>Resumen del Negocio 📈</h2>
-            <div class="form-group-row" style="justify-content: space-around; text-align: center;">
+            <div class="form-group-row" style="justify-content: space-around; text-align: center; margin-bottom: 0;">
                 <div style="flex: 1; padding: 10px;">
                     <p style="font-size: 0.9rem; color: #7d6660; font-weight: 600;">Total de Ventas Registradas</p>
                     <span id="stat-total-ventas" style="font-size: 1.8rem; font-weight: 600; color: #7a9e9f;">0</span>
@@ -113,28 +304,28 @@
                     <button type="button" id="btn-agregar-item" class="btn-agregar-lista">Añadir</button>
                 </div>
 
-                <datalist id="lista_productos">
-                    <!-- Se llena dinámicamente desde LocalStorage -->
-                </datalist>
+                <datalist id="lista_productos"></datalist>
 
-                <table class="venta-tabla" id="tabla-carrito">
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Precio Unitario</th>
-                            <th>Cantidad</th>
-                            <th>Total</th>
-                            <th>Quitar</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="venta-tabla" id="tabla-carrito">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Precio Unitario</th>
+                                <th>Cantidad</th>
+                                <th>Total</th>
+                                <th>Quitar</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
 
                 <div class="total-box">
                     Total Operación: $<span id="monto-total-venta">0</span>
                 </div>
 
-                <button type="submit" class="btn-submit" style="background-color: #dca397; margin-top: 15px;">Finalizar y Registrar Venta</button>
+                <button type="submit" class="btn-submit">Finalizar y Registrar Venta</button>
             </form>
         </section>
 
@@ -200,12 +391,12 @@
 
                 <div class="form-group">
                     <label for="caracteristicas">Características / Descripción detallada</label>
-                    <textarea id="caracteristicas" name="caracteristicas" rows="3" placeholder="Ej: Hidratante, ideal para pieles sensibles, contiene extracto de centella asiática..." style="width: 100%; padding: 10px; border: 1px solid #f3d1cb; border-radius: 8px; font-family: 'Poppins', sans-serif; resize: vertical;"></textarea>
+                    <textarea id="caracteristicas" name="caracteristicas" rows="3" placeholder="Ej: Hidratante, ideal para pieles sensibles..."></textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="foto">Foto del Producto (URL o Imagen)</label>
-                    <input type="text" id="foto" name="foto" placeholder="Ej: img/producto.jpg o URL de imagen" style="width: 100%; padding: 10px; border: 1px solid #f3d1cb; border-radius: 8px;">
+                    <input type="text" id="foto" name="foto" placeholder="Ej: img/producto.jpg o URL de imagen">
                 </div>
 
                 <button type="submit" class="btn-submit">Guardar Producto</button>
@@ -228,9 +419,7 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="tabla-inventario-body">
-                        <!-- Se llena dinámicamente desde LocalStorage -->
-                    </tbody>
+                    <tbody id="tabla-inventario-body"></tbody>
                 </table>
             </div>
         </section>
@@ -240,20 +429,18 @@
     <div id="modal-detalles" class="modal">
         <div class="modal-content">
             <span class="close-modal" id="btn-close-modal">&times;</span>
-            <h2 id="modal-titulo-prod">Nombre Producto</h2>
-            <img id="modal-img-prod" src="" alt="Foto del Producto" class="modal-img" onerror="this.src='img/producto_defecto.jpg'">
-            <p><strong>Marca:</strong> <span id="modal-marca-prod"></span></p>
-            <p><strong>Precio Venta:</strong> $<span id="modal-precio-prod"></span></p>
-            <p><strong>Stock Disponible:</strong> <span id="modal-stock-prod"></span> u.</p>
-            <hr style="border: 0; border-top: 1px solid #f5ebe9; margin: 15px 0;">
-            <p style="text-align: left; margin-bottom: 0;"><strong>Características:</strong></p>
-            
+            <h2 id="modal-titulo-prod" style="font-size: 1.3rem; margin-bottom: 15px; border: none; padding: 0;">Nombre Producto</h2>
+            <img id="modal-img-prod" src="" alt="Foto del Producto" class="modal-img">
+            <p style="margin-bottom: 5px;"><strong>Marca:</strong> <span id="modal-marca-prod"></span></p>
+            <p style="margin-bottom: 5px;"><strong>Precio Venta:</strong> $<span id="modal-precio-prod"></span></p>
+            <p style="margin-bottom: 10px;"><strong>Stock Disponible:</strong> <span id="modal-stock-prod"></span> u.</p>
+            <hr style="border: 0; border-top: 1px solid #f5ebe9; margin: 12px 0;">
+            <p style="text-align: left; margin-bottom: 0; font-weight: 600; color: #7d6660;">Características:</p>
             <div id="modal-info-prod" class="modal-scroll-caracteristicas"></div>
         </div>
     </div>
 
     <script>
-        // Categorías y subcategorías
         const subcategoriasPorCategoria = {
             "Aromaterapia": ["Aceites esenciales", "Aromatizantes de ambiente", "Esencias para hornillo"],
             "Capilar": ["Capilar Productos"],
@@ -287,7 +474,6 @@
             }
         }
 
-        // --- datos iniciales de ejemplos ---
         function inicializarDatos() {
             if (!localStorage.getItem('productos_kbeauty')) {
                 const productosIniciales = [
@@ -301,19 +487,7 @@
                         precio_venta: 15000,
                         stock: 10,
                         caracteristicas: "Protector solar hidratante con extracto de hoja de aloe vera. Ideal para todo tipo de piel.",
-                        foto: "img/producto_defecto.jpg"
-                    },
-                    {
-                        id: 2,
-                        nombre: "Sérum Facial Retinol Intense",
-                        marca: "Some By Mi",
-                        categoria: "Faciales",
-                        subcategoria: "Sérum y Boosters",
-                        precio_costo: 12000,
-                        precio_venta: 22000,
-                        stock: 5,
-                        caracteristicas: "Sérum antiedad con retinol, retinal y colágeno para mejorar la elasticidad y reducir arrugas.",
-                        foto: "img/producto_defecto.jpg"
+                        foto: ""
                     }
                 ];
                 localStorage.setItem('productos_kbeauty', JSON.stringify(productosIniciales));
@@ -323,46 +497,30 @@
             }
         }
 
-        function obtenerProductos() {
-            return JSON.parse(localStorage.getItem('productos_kbeauty')) || [];
-        }
+        function obtenerProductos() { return JSON.parse(localStorage.getItem('productos_kbeauty')) || []; }
+        function guardarProductos(productos) { localStorage.setItem('productos_kbeauty', JSON.stringify(productos)); }
+        function obtenerVentas() { return JSON.parse(localStorage.getItem('ventas_kbeauty')) || []; }
+        function guardarVentas(ventas) { localStorage.setItem('ventas_kbeauty', JSON.stringify(ventas)); }
 
-        function guardarProductos(productos) {
-            localStorage.setItem('productos_kbeauty', JSON.stringify(productos));
-        }
-
-        function obtenerVentas() {
-            return JSON.parse(localStorage.getItem('ventas_kbeauty')) || [];
-        }
-
-        function guardarVentas(ventas) {
-            localStorage.setItem('ventas_kbeauty', JSON.stringify(ventas));
-        }
-
-        // --- renderizar inventario y resumen ---
         function renderizarSistema() {
             const productos = obtenerProductos();
             const ventas = obtenerVentas();
             
-            // Actualizar Resumen
-            const totalVentas = ventas.length;
-            const cajaTotal = ventas.reduce((acc, v) => acc + v.total, 0);
+            document.getElementById("stat-total-ventas").textContent = ventas.length;
+            document.getElementById("stat-caja-total").textContent = "$" + ventas.reduce((acc, v) => acc + v.total, 0).toLocaleString('es-AR');
+            
             const sinStock = productos.filter(p => p.stock === 0).length;
-
-            document.getElementById("stat-total-ventas").textContent = totalVentas;
-            document.getElementById("stat-caja-total").textContent = "$" + cajaTotal.toLocaleString('es-AR');
             const elSinStock = document.getElementById("stat-sin-stock");
             elSinStock.textContent = sinStock;
             elSinStock.style.color = sinStock > 0 ? '#b81212' : '#dca397';
 
-            // Actualizar Tabla Inventario
             const tbodyInv = document.getElementById("tabla-inventario-body");
             tbodyInv.innerHTML = "";
 
             productos.forEach(row => {
                 const precioFormateado = row.precio_venta.toLocaleString('es-AR');
-                const caracteristicas = row.caracteristicas || "Sin descripción disponible para este cosmético.";
-                const fotoUrl = row.foto || "img/producto_defecto.jpg";
+                const caracteristicas = row.caracteristicas || "Sin descripción disponible.";
+                const fotoUrl = row.foto || "";
                 const catMostrar = row.categoria || "General";
                 const subMostrar = row.subcategoria || "-";
 
@@ -380,12 +538,8 @@
                     <td>${row.stock} u.</td>
                     <td>
                         <a href='#' class='btn-icon btn-ver' title='Ver Detalles' 
-                            data-nombre='${nombreEsc}' 
-                            data-marca='${marcaEsc}' 
-                            data-precio='${precioFormateado}' 
-                            data-stock='${row.stock}' 
-                            data-info='${caractEsc}' 
-                            data-foto='${fotoUrl}'>🔎</a>
+                            data-nombre='${nombreEsc}' data-marca='${marcaEsc}' data-precio='${precioFormateado}' 
+                            data-stock='${row.stock}' data-info='${caractEsc}' data-foto='${fotoUrl}'>🔎</a>
                         <a href='#' class='btn-icon' title='Editar' onclick='editarProducto(${row.id}); return false;' style='color: #7a9e9f;'>✏️</a>
                         <a href='#' class='btn-icon' title='Eliminar' onclick='confirmarEliminacion(${row.id}, "${nombreEsc}"); return false;' style='color: #dca397;'>🗑️</a>
                     </td>
@@ -393,7 +547,6 @@
                 tbodyInv.appendChild(tr);
             });
 
-            // Actualizar Datalist de Ventas
             const datalist = document.getElementById("lista_productos");
             datalist.innerHTML = "";
             productos.filter(p => p.stock > 0).forEach(prod => {
@@ -406,7 +559,6 @@
                 datalist.appendChild(option);
             });
 
-            // Re-vincular eventos de los botones Ver (modal)
             vincularModalEventos();
         }
 
@@ -415,14 +567,12 @@
             return text.replace(/"/g, '&quot;').replace(/'/g, '&#039;');
         }
 
-        // --- guardar nuevo producto ---
         function guardarNuevoProducto(e) {
             e.preventDefault();
             const productos = obtenerProductos();
-            
             const nuevoId = productos.length > 0 ? Math.max(...productos.map(p => p.id)) + 1 : 1;
             
-            const nuevoProd = {
+            productos.push({
                 id: nuevoId,
                 nombre: document.getElementById("nombre").value.trim(),
                 marca: document.getElementById("marca").value.trim(),
@@ -432,53 +582,36 @@
                 precio_venta: parseFloat(document.getElementById("precio_venta").value),
                 stock: parseInt(document.getElementById("stock").value, 10),
                 caracteristicas: document.getElementById("caracteristicas").value.trim(),
-                foto: document.getElementById("foto").value.trim() || "img/producto_defecto.jpg"
-            };
+                foto: document.getElementById("foto").value.trim()
+            });
 
-            productos.push(nuevoProd);
             guardarProductos(productos);
             renderizarSistema();
             document.getElementById("form-nuevo-producto").reset();
             document.getElementById("subcategoria").innerHTML = '<option value="">-- Primero elegí una categoría --</option>';
 
-            Swal.fire({
-                icon: 'success',
-                title: '¡Producto Guardado! ✨',
-                text: 'El cosmético fue registrado con éxito en el sistema.',
-                confirmButtonColor: '#dca397'
-            });
+            Swal.fire({ icon: 'success', title: '¡Producto Guardado! ✨', text: 'El cosmético fue registrado con éxito.', confirmButtonColor: '#dca397' });
         }
 
-        // --- eliminar producto ---
         function confirmarEliminacion(id, nombreProducto) {
             Swal.fire({
                 title: '¿Eliminar producto?',
-                text: `¿Estás seguro de que deseas eliminar "${nombreProducto}" del inventario?`,
+                text: `¿Deseas eliminar "${nombreProducto}" del inventario?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#dca397',
                 cancelButtonColor: '#7d6660',
                 confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar',
-                reverseButtons: true
+                cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    let productos = obtenerProductos();
-                    productos = productos.filter(p => p.id !== id);
-                    guardarProductos(productos);
+                    guardarProductos(obtenerProductos().filter(p => p.id !== id));
                     renderizarSistema();
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Eliminado! 🗑️',
-                        text: 'El cosmético fue eliminado del inventario de forma segura.',
-                        confirmButtonColor: '#dca397'
-                    });
+                    Swal.fire({ icon: 'success', title: '¡Eliminado!', text: 'El producto fue eliminado.', confirmButtonColor: '#dca397' });
                 }
             });
         }
 
-        // --- editar producto ---
         function editarProducto(id) {
             const productos = obtenerProductos();
             const prod = productos.find(p => p.id === id);
@@ -498,44 +631,32 @@
                 showCancelButton: true,
                 confirmButtonColor: '#dca397',
                 cancelButtonColor: '#7d6660',
-                confirmButtonText: 'Guardar cambios',
-                cancelButtonText: 'Cancelar',
-                preConfirm: () => {
-                    return {
-                        precio: parseFloat(document.getElementById('swal-input-precio').value),
-                        stock: parseInt(document.getElementById('swal-input-stock').value, 10)
-                    }
-                }
+                confirmButtonText: 'Guardar',
+                preConfirm: () => ({
+                    precio: parseFloat(document.getElementById('swal-input-precio').value),
+                    stock: parseInt(document.getElementById('swal-input-stock').value, 10)
+                })
             }).then((result) => {
                 if (result.isConfirmed) {
                     prod.precio_venta = result.value.precio;
                     prod.stock = result.value.stock;
                     guardarProductos(productos);
                     renderizarSistema();
-                    Swal.fire({
-                        icon: 'success',
-                        title: '¡Modificado! ✏️',
-                        text: 'El producto se actualizó correctamente.',
-                        confirmButtonColor: '#dca397'
-                    });
+                    Swal.fire({ icon: 'success', title: '¡Actualizado!', confirmButtonColor: '#dca397' });
                 }
             });
         }
 
-        // --- MANEJO DEL CARRITO DE VENTAS ---
         let carritoVenta = [];
 
         function actualizarTablaCarrito() {
             const tbody = document.querySelector("#tabla-carrito tbody");
-            const spanTotal = document.getElementById("monto-total-venta");
-            
             tbody.innerHTML = "";
             let totalGeneral = 0;
 
             carritoVenta.forEach((item, index) => {
                 const totalItem = item.precio * item.cantidad;
                 totalGeneral += totalItem;
-
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td><strong>${item.nombre}</strong></td>
@@ -546,8 +667,7 @@
                 `;
                 tbody.appendChild(tr);
             });
-
-            spanTotal.textContent = totalGeneral.toLocaleString('es-AR');
+            document.getElementById("monto-total-venta").textContent = totalGeneral.toLocaleString('es-AR');
         }
 
         function quitarDelCarrito(index) {
@@ -558,52 +678,36 @@
         function registrarVentaLocal(e) {
             e.preventDefault();
             if (carritoVenta.length === 0) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Carrito vacío',
-                    text: 'Añadí al menos un producto a la lista antes de finalizar la venta.',
-                    confirmButtonColor: '#dca397'
-                });
+                Swal.fire({ icon: 'warning', title: 'Carrito vacío', text: 'Agregá al menos un producto.', confirmButtonColor: '#dca397' });
                 return;
             }
 
             let productos = obtenerProductos();
             const ventas = obtenerVentas();
-
             let totalVentaOperacion = 0;
+
             carritoVenta.forEach(item => {
                 totalVentaOperacion += (item.precio * item.cantidad);
-                // Descontar stock
                 const prodRef = productos.find(p => p.id === item.id);
-                if (prodRef) {
-                    prodRef.stock = Math.max(0, prodRef.stock - item.cantidad);
-                }
+                if (prodRef) prodRef.stock = Math.max(0, prodRef.stock - item.cantidad);
             });
 
-            const nuevaVenta = {
+            ventas.push({
                 id: ventas.length > 0 ? Math.max(...ventas.map(v => v.id)) + 1 : 1,
                 items: [...carritoVenta],
                 total: totalVentaOperacion,
                 fecha: new Date().toISOString()
-            };
+            });
 
-            ventas.push(nuevaVenta);
             guardarVentas(ventas);
             guardarProductos(productos);
-
             carritoVenta = [];
             actualizarTablaCarrito();
             renderizarSistema();
 
-            Swal.fire({
-                icon: 'success',
-                title: '¡Venta Registrada! 🎉',
-                text: 'La operación fue exitosa y el stock ha sido actualizado.',
-                confirmButtonColor: '#dca397'
-            });
+            Swal.fire({ icon: 'success', title: '¡Venta Registrada! 🎉', text: 'Stock actualizado con éxito.', confirmButtonColor: '#dca397' });
         }
 
-        // --- Lupita ---
         function vincularModalEventos() {
             const modal = document.getElementById("modal-detalles");
             const btnClose = document.getElementById("btn-close-modal");
@@ -616,30 +720,19 @@
                     document.getElementById("modal-precio-prod").textContent = this.dataset.precio;
                     document.getElementById("modal-stock-prod").textContent = this.dataset.stock;
                     document.getElementById("modal-info-prod").textContent = this.dataset.info;
-                    document.getElementById("modal-img-prod").src = this.dataset.foto;
+                    document.getElementById("modal-img-prod").src = this.dataset.foto || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 24 24" fill="none" stroke="%23dca397" stroke-width="1"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>';
                     modal.style.display = "flex";
                 };
             });
 
-            if (btnClose) {
-                btnClose.onclick = function() {
-                    modal.style.display = "none";
-                };
-            }
-
-            window.onclick = function(e) {
-                if (e.target === modal) {
-                    modal.style.display = "none";
-                }
-            };
+            if (btnClose) btnClose.onclick = () => modal.style.display = "none";
+            window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
         }
 
-        // Inicialización tras cargar el DOM
         document.addEventListener("DOMContentLoaded", function() {
             inicializarDatos();
             renderizarSistema();
 
-            // --- BOTÓN AÑADIR VENTA ---
             const btnAgregar = document.getElementById("btn-agregar-item");
             const inputBuscar = document.getElementById("producto_buscar");
             const inputCantidad = document.getElementById("cantidad");
@@ -650,12 +743,7 @@
                     const cantidadIngresada = parseInt(inputCantidad.value, 10);
                     
                     if (!valorIngresado || isNaN(cantidadIngresada) || cantidadIngresada <= 0) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Atención',
-                            text: 'Por favor, seleccioná un producto válido y una cantidad mayor a 0.',
-                            confirmButtonColor: '#dca397'
-                        });
+                        Swal.fire({ icon: 'warning', title: 'Atención', text: 'Seleccioná un producto y cantidad válida.', confirmButtonColor: '#dca397' });
                         return;
                     }
 
@@ -663,12 +751,7 @@
                     const opcion = Array.from(datalist.options).find(opt => opt.value === valorIngresado);
 
                     if (!opcion) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Producto no encontrado',
-                            text: 'Seleccioná un producto existente desplegado en la lista.',
-                            confirmButtonColor: '#dca397'
-                        });
+                        Swal.fire({ icon: 'error', title: 'No encontrado', text: 'Seleccioná un producto de la lista desplegable.', confirmButtonColor: '#dca397' });
                         return;
                     }
 
@@ -680,28 +763,17 @@
                     const cantidadPrevios = itemExistente ? itemExistente.cantidad : 0;
 
                     if ((cantidadPrevios + cantidadIngresada) > stockDisponible) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Stock insuficiente',
-                            text: `No hay suficiente stock. Disponibles: ${stockDisponible} u. (Ya agregados: ${cantidadPrevios})`,
-                            confirmButtonColor: '#dca397'
-                        });
+                        Swal.fire({ icon: 'warning', title: 'Stock insuficiente', text: `Disponibles: ${stockDisponible} u.`, confirmButtonColor: '#dca397' });
                         return;
                     }
 
                     if (itemExistente) {
                         itemExistente.cantidad += cantidadIngresada;
                     } else {
-                        carritoVenta.push({
-                            id: id,
-                            nombre: valorIngresado,
-                            precio: precio,
-                            cantidad: cantidadIngresada
-                        });
+                        carritoVenta.push({ id: id, nombre: valorIngresado, precio: precio, cantidad: cantidadIngresada });
                     }
 
                     actualizarTablaCarrito();
-
                     inputBuscar.value = "";
                     inputCantidad.value = 1;
                     inputBuscar.focus();
