@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Beauty & Cosmética - Gestión de Inventario</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background-color: #fdf8f7; color: #4a3f3c; margin: 0; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid #f5ebe9; }
+        h1 { font-size: 1.8rem; color: #7d6660; margin: 0; }
+        h2 { font-size: 1.3rem; color: #7d6660; margin-top: 0; margin-bottom: 15px; border-bottom: 2px solid #f3d1cb; padding-bottom: 5px; }
+        
+        .btn-icon { font-size: 1.2rem; text-decoration: none; margin-right: 8px; display: inline-block; transition: transform 0.2s; cursor: pointer; }
+        .btn-icon:hover { transform: scale(1.2); }
+        .venta-tabla, table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; }
+        .venta-tabla th, .venta-tabla td, table th, table td { border: 1px solid #f5ebe9; padding: 10px; text-align: left; }
+        .venta-tabla th, table th { background-color: #fffaf9; color: #7d6660; }
+        
+        .total-box { font-size: 1.4rem; font-weight: 600; color: #6b534c; text-align: right; margin-top: 10px; padding: 10px; background: #fffaf9; border-radius: 8px; }
+        .row-agregar { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 15px; flex-wrap: wrap; }
+        .form-group-row { display: flex; gap: 15px; flex-wrap: wrap; }
+        .form-group { display: flex; flex-direction: column; flex: 1; min-width: 200px; margin-bottom: 15px; }
+        .form-group label { font-size: 0.85rem; font-weight: 600; color: #7d6660; margin-bottom: 5px; }
+        
+        input, select, textarea { padding: 10px; border: 1px solid #f3d1cb; border-radius: 8px; font-family: 'Poppins', sans-serif; font-size: 0.95rem; outline: none; }
+        input:focus, select:focus, textarea:focus { border-color: #dca397; }
+        
+        .btn-agregar-lista, .btn-submit { background-color: #dca397; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.3s; width: 100%; font-size: 1rem; }
+        .btn-agregar-lista { width: auto; }
+        .btn-agregar-lista:hover, .btn-submit:hover { background-color: #c98e82; }
+
+        /* Navigation Header Bar */
+        .main-header { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 10px; text-align: center; }
+        .header-nav { margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        .header-nav a { color: #7d6660; text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 6px 14px; border-radius: 15px; background-color: #fffaf9; border: 1px solid #f3d1cb; transition: all 0.2s; }
+        .header-nav a:hover { background-color: #f3d1cb; color: #fff; }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center; }
+        .modal-content { background-color: white; padding: 20px; border-radius: 12px; max-width: 450px; width: 90%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; text-align: center; }
+        .close-modal { position: absolute; top: 10px; right: 15px; font-size: 1.5rem; cursor: pointer; color: #7d6660; }
+        .modal-img { max-width: 150px; height: 150px; border-radius: 8px; margin: 0 auto 15px; background: #eee; display: block; object-fit: cover; }
+
+        .modal-scroll-caracteristicas { width: 100%; max-height: 120px; overflow-y: auto; background-color: #fcf9f8; padding: 10px; border-radius: 8px; border: 1px solid #e6dbd8; text-align: left; margin-top: 8px; font-size: 0.9rem; white-space: pre-line; }
+        .badge-categoria { background-color: #f3d1cb; color: #7d6660; padding: 3px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; display: inline-block; }
+        .subcategoria-texto { color: #8a736d; font-size: 0.8rem; display: block; margin-top: 2px; }
+        .table-responsive { overflow-x: auto; }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <h1>Sistema de Gestión - Estética & Cosmética 🌸</h1>
+        <nav class="header-nav">
+            <a href="#sec-resumen">Resumen</a>
+            <a href="#sec-venta">Nueva Venta</a>
+            <a href="#sec-nuevo-producto">Nuevo Producto</a>
+            <a href="#sec-inventario">Inventario</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        
+        <!-- Resumen del Negocio -->
+        <section id="sec-resumen" class="card stats-section" style="background-color: #fffaf9; border-color: #f3d1cb;">
+            <h2>Resumen del Negocio 📈</h2>
+            <div class="form-group-row" style="justify-content: space-around; text-align: center;">
+                <div style="flex: 1; padding: 10px;">
+                    <p style="font-size: 0.85rem; color: #7d6660; font-weight: 600; margin: 0;">Total de Ventas</p>
+                    <span id="stat-ventas" style="font-size: 1.8rem; font-weight: 600; color: #7a9e9f;">0</span>
+                </div>
+
+                <div style="flex: 1; padding: 10px; border-left: 1px solid #f5ebe9; border-right: 1px solid #f5ebe9;">
+                    <p style="font-size: 0.85rem; color: #7d6660; font-weight: 600; margin: 0;">Caja Total Recaudada</p>
+                    <span id="stat-caja" style="font-size: 1.8rem; font-weight: 600; color: #6b534c;">$0</span>
+                </div>
+
+                <div style="flex: 1; padding: 10px;">
+                    <p style="font-size: 0.85rem; color: #7d6660; font-weight: 600; margin: 0;">Productos Sin Stock</p>
+                    <span id="stat-sin-stock" style="font-size: 1.8rem; font-weight: 600; color: #dca397;">0</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Registrar Nueva Venta -->
+        <section id="sec-venta" class="card sales-section">
+            <h2>Registrar Nueva Venta 🛍️</h2>
+            <form id="form-ventas-multiples">
+                <div class="row-agregar">
+                    <div class="form-group" style="flex: 2; margin-bottom: 0;">
+                        <label for="producto_buscar">Buscar Producto (Nombre o marca)</label>
+                        <input type="text" id="producto_buscar" list="lista_productos" placeholder="Escribí para buscar... Ej: COSRX" autocomplete="off">
+                    </div>
+                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                        <label for="cantidad">Cantidad</label>
+                        <input type="number" id="cantidad" min="1" value="1">
+                    </div>
+                    <button type="button" id="btn-agregar-item" class="btn-agregar-lista">Añadir</button>
+                </div>
+
+                <datalist id="lista_productos"></datalist>
+
+                <div class="table-responsive">
+                    <table class="venta-tabla" id="tabla-carrito">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Precio Unitario</th>
+                                <th>Cantidad</th>
+                                <th>Total</th>
+                                <th>Quitar</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <div class="total-box">
+                    Total Operación: $<span id="monto-total-venta">0</span>
+                </div>
+
+                <button type="submit" class="btn-submit" style="margin-top: 15px;">Finalizar y Registrar Venta</button>
+            </form>
+        </section>
+
+        <!-- Registrar Nuevo Cosmético -->
+        <section id="sec-nuevo-producto" class="card form-section">
+            <h2>Registrar Nuevo Cosmético 💄</h2>
+            <form id="form-nuevo-producto">
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="nombre">Nombre del Producto</label>
+                        <input type="text" id="nombre" placeholder="Ej: Protector Solar Aloe Soothing" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="marca">Marca</label>
+                        <input type="text" id="marca" placeholder="Ej: COSRX">
+                    </div>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="categoria">Categoría</label>
+                        <select id="categoria" required onchange="actualizarSubcategorias()">
+                            <option value="">-- Seleccionar Categoría --</option>
+                            <option value="Aromaterapia">Aromaterapia</option>
+                            <option value="Capilar">Capilar</option>
+                            <option value="Corporales">Corporales</option>
+                            <option value="Cosmética Coreana">Cosmética Coreana</option>
+                            <option value="Faciales">Faciales</option>
+                            <option value="Maquillaje">Maquillaje</option>
+                            <option value="Perfumes">Perfumes</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subcategoria">Subcategoría</label>
+                        <select id="subcategoria" required>
+                            <option value="">-- Primero elegí una categoría --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="precio_costo">Precio Costo ($)</label>
+                        <input type="number" step="0.01" min="0" id="precio_costo" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="precio_venta">Precio Venta ($)</label>
+                        <input type="number" step="0.01" min="0" id="precio_venta" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="stock">Stock</label>
+                        <input type="number" min="0" id="stock" placeholder="0" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="caracteristicas">Características / Descripción detallada</label>
+                    <textarea id="caracteristicas" rows="3" placeholder="Ej: Hidratante, ideal para pieles sensibles..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">Guardar Producto</button>
+            </form>
+        </section>
+
+        <!-- Inventario Actual -->
+        <section id="sec-inventario" class="card table-section">
+            <h2>Inventario Actual 📦</h2>
+            <div class="table-responsive">
+                <table id="tabla-inventario">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Marca</th>
+                            <th>Clasificación</th>
+                            <th>Precio Venta</th>
+                            <th>Stock</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal Detalles -->
+    <div id="modal-detalles" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="btn-close-modal">&times;</span>
+            <h2 id="modal-titulo-prod">Nombre Producto</h2>
+            <img id="modal-img-prod" src="https://via.placeholder.com/150?text=K-Beauty" alt="Foto del Producto" class="modal-img">
+            <p><strong>Marca:</strong> <span id="modal-marca-prod"></span></p>
+            <p><strong>Precio Venta:</strong> $<span id="modal-precio-prod"></span></p>
+            <p><strong>Stock Disponible:</strong> <span id="modal-stock-prod"></span> u.</p>
+            <hr style="border: 0; border-top: 1px solid #f5ebe9; margin: 15px 0;">
+            <p style="text-align: left; margin-bottom: 0;"><strong>Características:</strong></p>
+            <div id="modal-info-prod" class="modal-scroll-caracteristicas"></div>
+        </div>
+    </div>
+
+    <script>
+        // Datos Iniciales (Demo si no hay nada en LocalStorage)
+        const productosIniciales = [
+            { id: 1, nombre: "Advanced Snail 96 Mucin Power Essence", marca: "COSRX", categoria: "Cosmética Coreana", subcategoria: "General K-Beauty", precio_costo: 10000, precio_venta: 18500, stock: 12, caracteristicas: "Esencia formulada con 96% de mucina de caracol para reparar e hidratar la piel." },
+            { id: 2, nombre: "Relief Sun : Rice + Probiotics", marca: "Beauty of Joseon", categoria: "Faciales", subcategoria: "Protección Solar", precio_costo: 12000, precio_venta: 22000, stock: 0, caracteristicas: "Protector solar químico orgánico, ligero y enriquecido con extracto de arroz." }
+        ];
+
+        let inventario = JSON.parse(localStorage.getItem("kbeauty_inventario")) || productosIniciales;
+        let ventas = JSON.parse(localStorage.getItem("kbeauty_ventas")) || [];
+        let carritoVenta = [];
+
+        const subcategoriasPorCategoria = {
+            "Aromaterapia": ["Aceites esenciales", "Aromatizantes de ambiente", "Esencias para hornillo"],
+            "Capilar": ["Capilar Productos"],
+            "Corporales": ["Cremas Corporales", "Geles Corporales", "Manos y Pies"],
+            "Cosmética Coreana": ["General K-Beauty"],
+            "Faciales": ["Protección Solar", "Sérum y Boosters", "Cremas Humectantes y Emulsiones", "Limpieza y Exfoliación"],
+            "Maquillaje": ["Bases", "Correctores", "Labiales y gloss"],
+            "Perfumes": ["Body splash", "Femeninos"]
+        };
+
+        function guardarDatos() {
+            localStorage.setItem("kbeauty_inventario", JSON.stringify(inventario));
+            localStorage.setItem("kbeauty_ventas", JSON.stringify(ventas));
+            renderizarTodo();
+        }
+
+        function actualizarSubcategorias() {
+            const selectCat = document.getElementById("categoria");
+            const selectSub = document.getElementById("subcategoria");
+            const cat = selectCat.value;
+
+            selectSub.innerHTML = '<option value="">-- Seleccionar Subcategoría --</option>';
+            if (cat && subcategoriasPorCategoria[cat]) {
+                subcategoriasPorCategoria[cat].forEach(sub => {
+                    const opt = document.createElement("option");
+                    opt.value = sub;
+                    opt.textContent = sub;
+                    selectSub.appendChild(opt);
+                });
+            }
+        }
+
+        function renderizarResumen() {
+            document.getElementById("stat-ventas").textContent = ventas.length;
+            const cajaTotal = ventas.reduce((acc, v) => acc + v.total, 0);
+            document.getElementById("stat-caja").textContent = `$${cajaTotal.toLocaleString('es-AR')}`;
+            
+            const sinStock = inventario.filter(p => p.stock === 0).length;
+            const elSinStock = document.getElementById("stat-sin-stock");
+            elSinStock.textContent = sinStock;
+            elSinStock.style.color = sinStock > 0 ? '#b81212' : '#7a9e9f';
+        }
+
+        function renderizarInventario() {
+            const tbody = document.querySelector("#tabla-inventario tbody");
+            const datalist = document.getElementById("lista_productos");
+            
+            tbody.innerHTML = "";
+            datalist.innerHTML = "";
+
+            inventario.forEach(p => {
+                // Rellenar Inventario
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${p.id}</td>
+                    <td><strong>${p.nombre}</strong></td>
+                    <td>${p.marca || '-'}</td>
+                    <td><span class='badge-categoria'>${p.categoria}</span><span class='subcategoria-texto'>${p.subcategoria}</span></td>
+                    <td>$${parseFloat(p.precio_venta).toLocaleString('es-AR')}</td>
+                    <td>${p.stock} u.</td>
+                    <td>
+                        <a href='#' class='btn-icon btn-ver' onclick='abrirModal(${p.id}); return false;'>🔎</a>
+                        <a href='#' class='btn-icon' onclick='eliminarProducto(${p.id}); return false;' style='color: #dca397;'>🗑️</a>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+
+                // Rellenar Datalist para Ventas
+                if (p.stock > 0) {
+                    const opt = document.createElement("option");
+                    const label = `${p.nombre} ${p.marca ? '(' + p.marca + ')' : ''}`;
+                    opt.value = label;
+                    opt.dataset.id = p.id;
+                    opt.dataset.stock = p.stock;
+                    opt.dataset.precio = p.precio_venta;
+                    datalist.appendChild(opt);
+                }
+            });
+        }
+
+        function renderizarTodo() {
+            renderizarResumen();
+            renderizarInventario();
+            actualizarTablaCarrito();
+        }
+
+        // CARRO DE VENTAS
+        function actualizarTablaCarrito() {
+            const tbody = document.querySelector("#tabla-carrito tbody");
+            const spanTotal = document.getElementById("monto-total-venta");
+            tbody.innerHTML = "";
+            let totalGeneral = 0;
+
+            carritoVenta.forEach((item, index) => {
+                const totalItem = item.precio * item.cantidad;
+                totalGeneral += totalItem;
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong>${item.nombre}</strong></td>
+                    <td>$${item.precio.toLocaleString('es-AR')}</td>
+                    <td>${item.cantidad}</td>
+                    <td>$${totalItem.toLocaleString('es-AR')}</td>
+                    <td><a href="#" style="color: #dca397; text-decoration: none; font-weight: bold;" onclick="quitarDelCarrito(${index}); return false;">❌</a></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            spanTotal.textContent = totalGeneral.toLocaleString('es-AR');
+        }
+
+        function quitarDelCarrito(index) {
+            carritoVenta.splice(index, 1);
+            actualizarTablaCarrito();
+        }
+
+        function eliminarProducto(id) {
+            const prod = inventario.find(p => p.id === id);
+            Swal.fire({
+                title: '¿Eliminar producto?',
+                text: `¿Estás seguro de borrar "${prod.nombre}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dca397',
+                cancelButtonColor: '#7d6660',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    inventario = inventario.filter(p => p.id !== id);
+                    guardarDatos();
+                    Swal.fire({ icon: 'success', title: 'Eliminado', confirmButtonColor: '#dca397' });
+                }
+            });
+        }
+
+        function abrirModal(id) {
+            const prod = inventario.find(p => p.id === id);
+            if (!prod) return;
+
+            document.getElementById("modal-titulo-prod").textContent = prod.nombre;
+            document.getElementById("modal-marca-prod").textContent = prod.marca || 'N/A';
+            document.getElementById("modal-precio-prod").textContent = prod.precio_venta.toLocaleString('es-AR');
+            document.getElementById("modal-stock-prod").textContent = prod.stock;
+            document.getElementById("modal-info-prod").textContent = prod.caracteristicas || 'Sin descripción disponible.';
+            document.getElementById("modal-detalles").style.display = "flex";
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            renderizarTodo();
+
+            // Modal Close
+            document.getElementById("btn-close-modal").addEventListener("click", () => {
+                document.getElementById("modal-detalles").style.display = "none";
+            });
+
+            // Añadir al Carrito
+            document.getElementById("btn-agregar-item").addEventListener("click", function() {
+                const inputBuscar = document.getElementById("producto_buscar");
+                const inputCantidad = document.getElementById("cantidad");
+                const val = inputBuscar.value.trim();
+                const cant = parseInt(inputCantidad.value, 10);
+
+                if (!val || isNaN(cant) || cant <= 0) {
+                    Swal.fire({ icon: 'warning', title: 'Atención', text: 'Elegí un producto y cantidad válida.', confirmButtonColor: '#dca397' });
+                    return;
+                }
+
+                const datalist = document.getElementById("lista_productos");
+                const opcion = Array.from(datalist.options).find(opt => opt.value === val);
+
+                if (!opcion) {
+                    Swal.fire({ icon: 'error', title: 'No encontrado', text: 'Seleccioná un producto de la lista desplegable.', confirmButtonColor: '#dca397' });
+                    return;
+                }
+
+                const id = parseInt(opcion.dataset.id, 10);
+                const stock = parseInt(opcion.dataset.stock, 10);
+                const precio = parseFloat(opcion.dataset.precio);
+
+                const itemExistente = carritoVenta.find(p => p.id === id);
+                const prevCant = itemExistente ? itemExistente.cantidad : 0;
+
+                if ((prevCant + cant) > stock) {
+                    Swal.fire({ icon: 'warning', title: 'Sin Stock suficiente', text: `Disponible: ${stock} u.`, confirmButtonColor: '#dca397' });
+                    return;
+                }
+
+                if (itemExistente) {
+                    itemExistente.cantidad += cant;
+                } else {
+                    carritoVenta.push({ id, nombre: val, precio, cantidad: cant });
+                }
+
+                actualizarTablaCarrito();
+                inputBuscar.value = "";
+                inputCantidad.value = 1;
+            });
+
+            // Finalizar Venta
+            document.getElementById("form-ventas-multiples").addEventListener("submit", function(e) {
+                e.preventDefault();
+                if (carritoVenta.length === 0) {
+                    Swal.fire({ icon: 'warning', title: 'Carrito vacío', confirmButtonColor: '#dca397' });
+                    return;
+                }
+
+                const totalVenta = carritoVenta.reduce((acc, i) => acc + (i.precio * i.cantidad), 0);
+                
+                // Descontar Stock
+                carritoVenta.forEach(item => {
+                    const prod = inventario.find(p => p.id === item.id);
+                    if (prod) prod.stock -= item.cantidad;
+                });
+
+                // Registrar Venta
+                ventas.push({ id: Date.now(), total: totalVenta, fecha: new Date().toISOString() });
+                carritoVenta = [];
+                guardarDatos();
+
+                Swal.fire({ icon: 'success', title: '¡Venta Registrada! 🎉', confirmButtonColor: '#dca397' });
+            });
+
+            // Registrar Producto
+            document.getElementById("form-nuevo-producto").addEventListener("submit", function(e) {
+                e.preventDefault();
+                const nuevo = {
+                    id: Date.now(),
+                    nombre: document.getElementById("nombre").value,
+                    marca: document.getElementById("marca").value,
+                    categoria: document.getElementById("categoria").value,
+                    subcategoria: document.getElementById("subcategoria").value,
+                    precio_costo: parseFloat(document.getElementById("precio_costo").value),
+                    precio_venta: parseFloat(document.getElementById("precio_venta").value),
+                    stock: parseInt(document.getElementById("stock").value, 10),
+                    caracteristicas: document.getElementById("caracteristicas").value
+                };
+
+                inventario.unshift(nuevo);
+                guardarDatos();
+                this.reset();
+                Swal.fire({ icon: 'success', title: '¡Producto Guardado! ✨', confirmButtonColor: '#dca397' });
+            });
+        });
+    </script>
+</body>
+</html>
