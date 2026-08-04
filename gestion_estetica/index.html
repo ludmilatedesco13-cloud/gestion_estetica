@@ -233,7 +233,6 @@
     </div>
 
     <script>
-        // Datos Iniciales (Demo si no hay nada en LocalStorage)
         const productosIniciales = [
             { id: 1, nombre: "Advanced Snail 96 Mucin Power Essence", marca: "COSRX", categoria: "Cosmética Coreana", subcategoria: "General K-Beauty", precio_costo: 10000, precio_venta: 18500, stock: 12, caracteristicas: "Esencia formulada con 96% de mucina de caracol para reparar e hidratar la piel." },
             { id: 2, nombre: "Relief Sun : Rice + Probiotics", marca: "Beauty of Joseon", categoria: "Faciales", subcategoria: "Protección Solar", precio_costo: 12000, precio_venta: 22000, stock: 0, caracteristicas: "Protector solar químico orgánico, ligero y enriquecido con extracto de arroz." }
@@ -294,7 +293,6 @@
             datalist.innerHTML = "";
 
             inventario.forEach(p => {
-                // Rellenar Inventario
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td>${p.id}</td>
@@ -310,7 +308,6 @@
                 `;
                 tbody.appendChild(tr);
 
-                // Rellenar Datalist para Ventas
                 if (p.stock > 0) {
                     const opt = document.createElement("option");
                     const label = `${p.nombre} ${p.marca ? '(' + p.marca + ')' : ''}`;
@@ -329,7 +326,6 @@
             actualizarTablaCarrito();
         }
 
-        // CARRO DE VENTAS
         function actualizarTablaCarrito() {
             const tbody = document.querySelector("#tabla-carrito tbody");
             const spanTotal = document.getElementById("monto-total-venta");
@@ -394,12 +390,10 @@
         document.addEventListener("DOMContentLoaded", function() {
             renderizarTodo();
 
-            // Modal Close
             document.getElementById("btn-close-modal").addEventListener("click", () => {
                 document.getElementById("modal-detalles").style.display = "none";
             });
 
-            // Añadir al Carrito
             document.getElementById("btn-agregar-item").addEventListener("click", function() {
                 const inputBuscar = document.getElementById("producto_buscar");
                 const inputCantidad = document.getElementById("cantidad");
@@ -442,7 +436,6 @@
                 inputCantidad.value = 1;
             });
 
-            // Finalizar Venta
             document.getElementById("form-ventas-multiples").addEventListener("submit", function(e) {
                 e.preventDefault();
                 if (carritoVenta.length === 0) {
@@ -452,13 +445,11 @@
 
                 const totalVenta = carritoVenta.reduce((acc, i) => acc + (i.precio * i.cantidad), 0);
                 
-                // Descontar Stock
                 carritoVenta.forEach(item => {
                     const prod = inventario.find(p => p.id === item.id);
                     if (prod) prod.stock -= item.cantidad;
                 });
 
-                // Registrar Venta
                 ventas.push({ id: Date.now(), total: totalVenta, fecha: new Date().toISOString() });
                 carritoVenta = [];
                 guardarDatos();
@@ -466,7 +457,6 @@
                 Swal.fire({ icon: 'success', title: '¡Venta Registrada! 🎉', confirmButtonColor: '#dca397' });
             });
 
-            // Registrar Producto
             document.getElementById("form-nuevo-producto").addEventListener("submit", function(e) {
                 e.preventDefault();
                 const nuevo = {
