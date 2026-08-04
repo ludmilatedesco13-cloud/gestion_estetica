@@ -501,11 +501,17 @@
         const subcategoriasPorCategoria = {
             "Aromaterapia": ["Aceites esenciales", "Aromatizantes de ambiente", "Esencias para hornillo"],
             "Capilar": ["Capilar Productos"],
-            "Corporales": ["Cremas Corporales", "Geles Corporales", "Manos y Pies"],
+            "Corporales": ["Cremas Corporales", "Geles Corporales", "Manos y Pies", "Tratamientos Corporales"],
             "Cosmética Coreana": ["General K-Beauty"],
-            "Faciales": ["Protección Solar", "Sérum y Boosters", "Cremas Humectantes y Emulsiones", "Limpieza y Exfoliación"],
-            "Maquillaje": ["Bases", "Correctores", "Labiales y gloss"],
-            "Perfumes": ["Body splash", "Femeninos"]
+            "Cursos online": ["General Cursos"],
+            "Faciales": ["Accesorios", "Ácidos", "Contorno de Ojos", "Cremas Humectantes y Emulsiones", "Despigmentantes", "Exosomas", "Geles y Sueros", "Labios", "Limpieza y Exfoliación", "Lociones y Brumas", "Máscaras Faciales", "Óleos y Aceites", "Protección Solar", "Renovadores", "Sérum y Boosters"],
+            "Insumos": ["Accesorios", "Básicos de Gabinete", "Jeringas y Agujas"],
+            "Kits": ["Kits Productos"],
+            "Maquillaje": ["Accesorios", "Bases", "Correctores", "Fijadores y Polvos", "Labiales y gloss", "Máscaras de Pestañas", "Rubores, Contornos e Iluminadores"],
+            "Perfumes": ["Body splash", "Femeninos"],
+            "Promociones": ["General Promos"],
+            "Suplementos": ["Suplementos Productos"],
+            "Tratamientos Profesionales": ["Ampollas y Concentrados", "Microneedling", "Radiofrecuencia"]
         };
 
         function guardarDatos() {
@@ -646,8 +652,16 @@
         document.addEventListener("DOMContentLoaded", function() {
             renderizarTodo();
 
+            const modal = document.getElementById("modal-detalles");
             document.getElementById("btn-close-modal").addEventListener("click", () => {
-                document.getElementById("modal-detalles").style.display = "none";
+                modal.style.display = "none";
+            });
+
+            // Cerrar modal al hacer clic fuera del contenido
+            window.addEventListener("click", (e) => {
+                if (e.target === modal) {
+                    modal.style.display = "none";
+                }
             });
 
             document.getElementById("btn-agregar-item").addEventListener("click", function() {
@@ -730,6 +744,7 @@
                 inventario.unshift(nuevo);
                 guardarDatos();
                 this.reset();
+                actualizarSubcategorias(); // Resetea select de subcategorías
                 Swal.fire({ icon: 'success', title: '¡Producto Guardado! ✨', confirmButtonColor: '#dca397' });
             });
         });
