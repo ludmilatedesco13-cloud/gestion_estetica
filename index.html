@@ -324,7 +324,7 @@
             </form>
         </section>
 
-        <!-- Registrar Nuevo Cosmético (Actualizado con enctype y input file) -->
+        <!-- Registrar Nuevo Cosmético -->
         <section id="sec-nuevo-producto" class="card form-section">
             <h2>Registrar Nuevo Cosmético 💄</h2>
             <form id="form-nuevo-producto" action="guardar_producto.php" method="POST" enctype="multipart/form-data" onsubmit="guardarNuevoProducto(event)">
@@ -389,7 +389,7 @@
                     <textarea id="caracteristicas" name="caracteristicas" rows="3" placeholder="Ej: Hidratante, ideal para pieles sensibles..."></textarea>
                 </div>
 
-                <!-- Selector de archivos actualizado para subir foto -->
+                <!-- Selector de archivos para subir foto -->
                 <div class="form-group">
                     <label for="foto">Foto del Producto</label>
                     <input type="file" id="foto" name="foto" accept="image/*">
@@ -456,12 +456,12 @@
         function actualizarSubcategorias() {
             const selectCategoria = document.getElementById("categoria");
             const selectSubcategoria = document.getElementById("subcategoria");
-            const categoriaSeleccionada = selectCategoria.value;
+            const categoriaSeleccionada = select.value; // se usa selectCategoria.value abajo
 
             selectSubcategoria.innerHTML = '<option value="">-- Seleccionar Subcategoría --</option>';
 
-            if (categoriaSeleccionada && subcategoriasPorCategoria[categoriaSeleccionada]) {
-                subcategoriasPorCategoria[categoriaSeleccionada].forEach(sub => {
+            if (selectCategoria.value && subcategoriasPorCategoria[selectCategoria.value]) {
+                subcategoriasPorCategoria[selectCategoria.value].forEach(sub => {
                     const option = document.createElement("option");
                     option.value = sub;
                     option.textContent = sub;
@@ -568,25 +568,40 @@
             const productos = obtenerProductos();
             const nuevoId = productos.length > 0 ? Math.max(...productos.map(p => p.id)) + 1 : 1;
             
-            productos.push({
-                id: nuevoId,
-                nombre: document.getElementById("nombre").value.trim(),
-                marca: document.getElementById("marca").value.trim(),
-                categoria: document.getElementById("categoria").value,
-                subcategoria: document.getElementById("subcategoria").value,
-                precio_costo: parseFloat(document.getElementById("precio_costo").value),
-                precio_venta: parseFloat(document.getElementById("precio_venta").value),
-                stock: parseInt(document.getElementById("stock").value, 10),
-                caracteristicas: document.getElementById("caracteristicas").value.trim(),
-                foto: ""
-            });
+            const archivoInput = document.getElementById("foto");
+            let fotoBase64 = "";
 
-            guardarProductos(productos);
-            renderizarSistema();
-            document.getElementById("form-nuevo-producto").reset();
-            document.getElementById("subcategoria").innerHTML = '<option value="">-- Primero elegí una categoría --</option>';
+            const guardarDatosFinales = (imgData) => {
+                productos.push({
+                    id: nuevoId,
+                    nombre: document.getElementById("nombre").value.trim(),
+                    marca: document.getElementById("marca").value.trim(),
+                    categoria: document.getElementById("categoria").value,
+                    subcategoria: document.getElementById("subcategoria").value,
+                    precio_costo: parseFloat(document.getElementById("precio_costo").value),
+                    precio_venta: parseFloat(document.getElementById("precio_venta").value),
+                    stock: parseInt(document.getElementById("stock").value, 10),
+                    caracteristicas: document.getElementById("caracteristicas").value.trim(),
+                    foto: imgData
+                });
 
-            Swal.fire({ icon: 'success', title: '¡Producto Guardado! ✨', text: 'El cosmético fue registrado con éxito.', confirmButtonColor: '#dca397' });
+                guardarProductos(productos);
+                renderizarSistema();
+                document.getElementById("form-nuevo-producto").reset();
+                document.getElementById("subcategoria").innerHTML = '<option value="">-- Primero elegí una categoría --</option>';
+
+                Swal.fire({ icon: 'success', title: '¡Producto Guardado! ✨', text: 'El cosmético fue registrado con éxito.', confirmButtonColor: '#dca397' });
+            };
+
+            if (archivoInput.files && archivoInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(uploadEvent) {
+                    guardarDatosFinales(uploadEvent.target.result);
+                };
+                reader.readAsDataURL(archivoInput.files[0]);
+            } else {
+                guardarDatosFinales("");
+            }
         }
 
         function confirmarEliminacion(id, nombreProducto) {
