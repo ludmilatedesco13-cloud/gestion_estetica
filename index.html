@@ -80,20 +80,6 @@
             gap: 45px; 
         }
 
-        .top-row {
-            display: flex;
-            gap: 18px;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .top-row .card {
-            flex: 0 1 calc(33.333% - 14px);
-            max-width: calc(33.333% - 14px);
-            min-width: 280px;
-        }
-
         /* Tarjetas (Cards) */
         .card {
             background: #ffffff;
@@ -101,20 +87,6 @@
             padding: 24px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
             border: 1px solid #f0e4e2;
-        }
-
-        @media (max-width: 1100px) {
-            .top-row .card {
-                flex: 1 1 45%;
-                max-width: 45%;
-            }
-        }
-
-        @media (max-width: 820px) {
-            .top-row .card {
-                flex: 1 1 100%;
-                max-width: 100%;
-            }
         }
 
         .card h2 {
@@ -324,10 +296,10 @@
             </form>
         </section>
 
-        <!-- Registrar Nuevo Cosmético (Actualizado con enctype y input file) -->
+        <!-- Registrar Nuevo Cosmético -->
         <section id="sec-nuevo-producto" class="card form-section">
             <h2>Registrar Nuevo Cosmético 💄</h2>
-            <form id="form-nuevo-producto" action="guardar_producto.php" method="POST" enctype="multipart/form-data" onsubmit="guardarNuevoProducto(event)">
+            <form id="form-nuevo-producto" onsubmit="guardarNuevoProducto(event)">
                 
                 <div class="form-group-row">
                     <div class="form-group">
@@ -337,6 +309,16 @@
                     <div class="form-group">
                         <label for="marca">Marca</label>
                         <input type="text" id="marca" name="marca" placeholder="Ej: COSRX">
+                    </div>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="origen">Origen</label>
+                        <select id="origen" name="origen" required>
+                            <option value="Nacional / Otro">Nacional / Otro</option>
+                            <option value="Coreano">Coreano</option>
+                        </select>
                     </div>
                 </div>
 
@@ -389,7 +371,6 @@
                     <textarea id="caracteristicas" name="caracteristicas" rows="3" placeholder="Ej: Hidratante, ideal para pieles sensibles..."></textarea>
                 </div>
 
-                <!-- Selector de archivos actualizado para subir foto -->
                 <div class="form-group">
                     <label for="foto">Foto del Producto</label>
                     <input type="file" id="foto" name="foto" accept="image/*">
@@ -470,6 +451,21 @@
             }
         }
 
+        function actualizarSubcategoriasEdicion(catActual, subActual) {
+            const selectSub = document.getElementById("swal-edit-subcategoria");
+            if (!selectSub) return;
+            selectSub.innerHTML = '<option value="">-- Seleccionar Subcategoría --</option>';
+            if (catActual && subcategoriasPorCategoria[catActual]) {
+                subcategoriasPorCategoria[catActual].forEach(sub => {
+                    const option = document.createElement("option");
+                    option.value = sub;
+                    option.textContent = sub;
+                    if (sub === subActual) option.selected = true;
+                    selectSub.appendChild(option);
+                });
+            }
+        }
+
         function inicializarDatos() {
             if (!localStorage.getItem('productos_kbeauty')) {
                 const productosIniciales = [
@@ -477,6 +473,7 @@
                         id: 1,
                         nombre: "Protector Solar Aloe Soothing",
                         marca: "COSRX",
+                        origen: "Coreano",
                         categoria: "Faciales",
                         subcategoria: "Protección Solar",
                         precio_costo: 8500,
@@ -565,6 +562,20 @@
 
         function guardarNuevoProducto(e) {
             e.preventDefault();
+            const archivoInput = document.getElementById("foto");
+            
+            if (archivoInput.files && archivoInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(uploadEvent) {
+                    procesarGuardadoProductoFinal(uploadEvent.target.result);
+                };
+                reader.readAsDataURL(archivoInput.files[0]);
+            } else {
+                procesarGuardadoProductoFinal("");
+            }
+        }
+
+        function procesarGuardadoProductoFinal(fotoBase64) {
             const productos = obtenerProductos();
             const nuevoId = productos.length > 0 ? Math.max(...productos.map(p => p.id)) + 1 : 1;
             
@@ -572,13 +583,14 @@
                 id: nuevoId,
                 nombre: document.getElementById("nombre").value.trim(),
                 marca: document.getElementById("marca").value.trim(),
+                origen: document.getElementById("origen").value,
                 categoria: document.getElementById("categoria").value,
                 subcategoria: document.getElementById("subcategoria").value,
                 precio_costo: parseFloat(document.getElementById("precio_costo").value),
                 precio_venta: parseFloat(document.getElementById("precio_venta").value),
                 stock: parseInt(document.getElementById("stock").value, 10),
                 caracteristicas: document.getElementById("caracteristicas").value.trim(),
-                foto: ""
+                foto: fotoBase64
             });
 
             guardarProductos(productos);
@@ -613,32 +625,130 @@
             const prod = productos.find(p => p.id === id);
             if (!prod) return;
 
+            const categoriasOpciones = Object.keys(subcategoriasPorCategoria).map(cat => 
+                `<option value="${cat}" ${cat === prod.categoria ? 'selected' : ''}>${cat}</option>`
+            ).join('');
+
+            const imgActualHtml = prod.foto 
+                ? `<img src="${prod.foto}" style="max-width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #f0e4e2; margin-bottom: 8px; display: block;">` 
+                : `<p style="font-size: 0.85rem; color: #888; margin-bottom: 8px;">No hay imagen cargada actualmente.</p>`;
+
             Swal.fire({
-                title: `Editar: ${prod.nombre}`,
+                title: `Editar Datos de: ${prod.nombre}`,
                 html: `
-                    <div style="text-align: left; display: flex; flex-direction: column; gap: 10px;">
-                        <label>Precio Venta ($):</label>
-                        <input id="swal-input-precio" class="swal2-input" type="number" value="${prod.precio_venta}" style="margin: 0; width: 100%;">
-                        <label>Stock:</label>
-                        <input id="swal-input-stock" class="swal2-input" type="number" value="${prod.stock}" style="margin: 0; width: 100%;">
+                    <div style="text-align: left; display: flex; flex-direction: column; gap: 12px; max-height: 65vh; overflow-y: auto; padding: 5px;">
+                        <label style="font-weight:600; font-size:0.9rem; color:#7d6660;">Nombre del Producto</label>
+                        <input id="swal-edit-nombre" class="swal2-input" type="text" value="${prod.nombre}" style="margin: 0; width: 100%;">
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <div style="flex: 1;">
+                                <label style="font-weight:600; font-size:0.9rem; color:#7d6660;">Marca</label>
+                                <input id="swal-edit-marca" class="swal2-input" type="text" value="${prod.marca || ''}" style="margin: 0; width: 100%;">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="font-weight:600; font-size:0.9rem; color:#7d6660;">Origen</label>
+                                <select id="swal-edit-origen" class="swal2-input" style="margin: 0; width: 100%; height: 48px;">
+                                    <option value="Nacional / Otro" ${prod.origen === 'Nacional / Otro' ? 'selected' : ''}>Nacional / Otro</option>
+                                    <option value="Coreano" ${prod.origen === 'Coreano' ? 'selected' : ''}>Coreano</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 10px;">
+                            <div style="flex: 1;">
+                                <label style="font-weight:600; font-size:0.9rem; color:#7d6660;">Categoría</label>
+                                <select id="swal-edit-categoria" class="swal2-input" style="margin: 0; width: 100%; height: 48px;" onchange="actualizarSubcategoriasEdicion(this.value, '')">
+                                    <option value="">-- Seleccionar --</option>
+                                    ${categoriasOpciones}
+                                </select>
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="font-weight:600; font-size:0.9rem; color:#7d6660;">Subcategoría</label>
+                                <select id="swal-edit-subcategoria" class="swal2-input" style="margin: 0; width: 100%; height: 48px;">
+                                    <option value="">-- Seleccioná categoría primero --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <label style="font-weight:600; font-size:0.9rem; color:#7d6660;">Características e Información del Producto</label>
+                        <textarea id="swal-edit-caracteristicas" class="swal2-textarea" style="margin: 0; width: 100%; height: 80px;">${prod.caracteristicas || ''}</textarea>
+
+                        <div style="display: flex; gap: 10px;">
+                            <div style="flex: 1;">
+                                <label style="font-weight:600; font-size:0.9rem; color:#7d6660;">Precio Costo ($)</label>
+                                <input id="swal-edit-costo" class="swal2-input" type="number" step="0.01" value="${prod.precio_costo}" style="margin: 0; width: 100%;">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="font-weight:600; font-size:0.9rem; color:#7d6660;">Precio Venta ($)</label>
+                                <input id="swal-edit-venta" class="swal2-input" type="number" step="0.01" value="${prod.precio_venta}" style="margin: 0; width: 100%;">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="font-weight:600; font-size:0.9rem; color:#7d6660;">Stock</label>
+                                <input id="swal-edit-stock" class="swal2-input" type="number" value="${prod.stock}" style="margin: 0; width: 100%;">
+                            </div>
+                        </div>
+
+                        <label style="font-weight:600; font-size:0.9rem; color:#7d6660; margin-top:5px;">Foto del Producto (Opcional)</label>
+                        <span style="font-size:0.85rem; color:#7d6660;">Foto actual:</span>
+                        ${imgActualHtml}
+                        <input id="swal-edit-foto" type="file" accept="image/*" style="font-size: 0.9rem;">
+                        <span style="font-size: 0.75rem; color: #888;">Dejar vacío si no deseas cambiar la imagen actual.</span>
                     </div>
                 `,
+                width: '600px',
                 focusConfirm: false,
                 showCancelButton: true,
                 confirmButtonColor: '#dca397',
                 cancelButtonColor: '#7d6660',
-                confirmButtonText: 'Guardar',
-                preConfirm: () => ({
-                    precio: parseFloat(document.getElementById('swal-input-precio').value),
-                    stock: parseInt(document.getElementById('swal-input-stock').value, 10)
-                })
+                confirmButtonText: 'Guardar Cambios',
+                cancelButtonText: 'Volver al Panel',
+                didOpen: () => {
+                    actualizarSubcategoriasEdicion(prod.categoria, prod.subcategoria);
+                },
+                preConfirm: () => {
+                    return new Promise((resolve) => {
+                        const fileInput = document.getElementById('swal-edit-foto');
+                        const datosNuevos = {
+                            nombre: document.getElementById('swal-edit-nombre').value.trim(),
+                            marca: document.getElementById('swal-edit-marca').value.trim(),
+                            origen: document.getElementById('swal-edit-origen').value,
+                            categoria: document.getElementById('swal-edit-categoria').value,
+                            subcategoria: document.getElementById('swal-edit-subcategoria').value,
+                            caracteristicas: document.getElementById('swal-edit-caracteristicas').value.trim(),
+                            precio_costo: parseFloat(document.getElementById('swal-edit-costo').value),
+                            precio_venta: parseFloat(document.getElementById('swal-edit-venta').value),
+                            stock: parseInt(document.getElementById('swal-edit-stock').value, 10)
+                        };
+
+                        if (fileInput.files && fileInput.files[0]) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                datosNuevos.foto = e.target.result;
+                                resolve(datosNuevos);
+                            };
+                            reader.readAsDataURL(fileInput.files[0]);
+                        } else {
+                            datosNuevos.foto = prod.foto; // Mantiene la foto anterior si no seleccionó otra
+                            resolve(datosNuevos);
+                        }
+                    });
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    prod.precio_venta = result.value.precio;
+                    prod.nombre = result.value.nombre;
+                    prod.marca = result.value.marca;
+                    prod.origen = result.value.origen;
+                    prod.categoria = result.value.categoria;
+                    prod.subcategoria = result.value.subcategoria;
+                    prod.caracteristicas = result.value.caracteristicas;
+                    prod.precio_costo = result.value.precio_costo;
+                    prod.precio_venta = result.value.precio_venta;
                     prod.stock = result.value.stock;
+                    prod.foto = result.value.foto;
+
                     guardarProductos(productos);
                     renderizarSistema();
-                    Swal.fire({ icon: 'success', title: '¡Actualizado!', confirmButtonColor: '#dca397' });
+                    Swal.fire({ icon: 'success', title: '¡Actualizado con éxito!', confirmButtonColor: '#dca397' });
                 }
             });
         }
@@ -716,9 +826,9 @@
                     document.getElementById("modal-precio-prod").textContent = this.dataset.precio;
                     document.getElementById("modal-stock-prod").textContent = this.dataset.stock;
                     document.getElementById("modal-info-prod").textContent = this.dataset.info;
-                    
+                   
                     const imgProd = document.getElementById("modal-img-prod");
-                    if (this.dataset.foto) {
+                    if (this.dataset.foto && this.dataset.foto.trim() !== "") {
                         imgProd.src = this.dataset.foto;
                         imgProd.style.display = "block";
                     } else {
@@ -727,7 +837,6 @@
                     modal.style.display = "flex";
                 };
             });
-
             btnClose.onclick = () => modal.style.display = "none";
             window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
         }
@@ -737,12 +846,9 @@
             const inputCantidad = document.getElementById("cantidad");
             const valorBusqueda = inputBuscar.value.trim();
             const cantidad = parseInt(inputCantidad.value, 10) || 1;
-
             if (!valorBusqueda) return;
-
             const opciones = document.querySelectorAll("#lista_productos option");
             let productoEncontrado = null;
-
             opciones.forEach(opt => {
                 if (opt.value === valorBusqueda) {
                     productoEncontrado = {
@@ -753,17 +859,14 @@
                     };
                 }
             });
-
             if (!productoEncontrado) {
                 Swal.fire({ icon: 'error', title: 'No encontrado', text: 'Seleccioná un producto válido de la lista.', confirmButtonColor: '#dca397' });
                 return;
             }
-
             if (cantidad > productoEncontrado.stockMax) {
                 Swal.fire({ icon: 'warning', title: 'Stock insuficiente', text: `Solo hay ${productoEncontrado.stockMax} unidades disponibles.`, confirmButtonColor: '#dca397' });
                 return;
             }
-
             const existente = carritoVenta.find(item => item.id === productoEncontrado.id);
             if (existente) {
                 if (existente.cantidad + cantidad > productoEncontrado.stockMax) {
@@ -779,7 +882,6 @@
                     cantidad: cantidad
                 });
             }
-
             actualizarTablaCarrito();
             inputBuscar.value = "";
             inputCantidad.value = "1";
