@@ -389,7 +389,6 @@
                     <textarea id="caracteristicas" name="caracteristicas" rows="3" placeholder="Ej: Hidratante, ideal para pieles sensibles..."></textarea>
                 </div>
 
-                <!-- Selector de archivos para subir foto -->
                 <div class="form-group">
                     <label for="foto">Foto del Producto</label>
                     <input type="file" id="foto" name="foto" accept="image/*">
@@ -456,12 +455,12 @@
         function actualizarSubcategorias() {
             const selectCategoria = document.getElementById("categoria");
             const selectSubcategoria = document.getElementById("subcategoria");
-            const categoriaSeleccionada = select.value; // se usa selectCategoria.value abajo
+            const categoriaSeleccionada = selectCategoria.value;
 
             selectSubcategoria.innerHTML = '<option value="">-- Seleccionar Subcategoría --</option>';
 
-            if (selectCategoria.value && subcategoriasPorCategoria[selectCategoria.value]) {
-                subcategoriasPorCategoria[selectCategoria.value].forEach(sub => {
+            if (categoriaSeleccionada && subcategoriasPorCategoria[categoriaSeleccionada]) {
+                subcategoriasPorCategoria[categoriaSeleccionada].forEach(sub => {
                     const option = document.createElement("option");
                     option.value = sub;
                     option.textContent = sub;
@@ -568,40 +567,25 @@
             const productos = obtenerProductos();
             const nuevoId = productos.length > 0 ? Math.max(...productos.map(p => p.id)) + 1 : 1;
             
-            const archivoInput = document.getElementById("foto");
-            let fotoBase64 = "";
+            productos.push({
+                id: nuevoId,
+                nombre: document.getElementById("nombre").value.trim(),
+                marca: document.getElementById("marca").value.trim(),
+                categoria: document.getElementById("categoria").value,
+                subcategoria: document.getElementById("subcategoria").value,
+                precio_costo: parseFloat(document.getElementById("precio_costo").value),
+                precio_venta: parseFloat(document.getElementById("precio_venta").value),
+                stock: parseInt(document.getElementById("stock").value, 10),
+                caracteristicas: document.getElementById("caracteristicas").value.trim(),
+                foto: ""
+            });
 
-            const guardarDatosFinales = (imgData) => {
-                productos.push({
-                    id: nuevoId,
-                    nombre: document.getElementById("nombre").value.trim(),
-                    marca: document.getElementById("marca").value.trim(),
-                    categoria: document.getElementById("categoria").value,
-                    subcategoria: document.getElementById("subcategoria").value,
-                    precio_costo: parseFloat(document.getElementById("precio_costo").value),
-                    precio_venta: parseFloat(document.getElementById("precio_venta").value),
-                    stock: parseInt(document.getElementById("stock").value, 10),
-                    caracteristicas: document.getElementById("caracteristicas").value.trim(),
-                    foto: imgData
-                });
+            guardarProductos(productos);
+            renderizarSistema();
+            document.getElementById("form-nuevo-producto").reset();
+            document.getElementById("subcategoria").innerHTML = '<option value="">-- Primero elegí una categoría --</option>';
 
-                guardarProductos(productos);
-                renderizarSistema();
-                document.getElementById("form-nuevo-producto").reset();
-                document.getElementById("subcategoria").innerHTML = '<option value="">-- Primero elegí una categoría --</option>';
-
-                Swal.fire({ icon: 'success', title: '¡Producto Guardado! ✨', text: 'El cosmético fue registrado con éxito.', confirmButtonColor: '#dca397' });
-            };
-
-            if (archivoInput.files && archivoInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(uploadEvent) {
-                    guardarDatosFinales(uploadEvent.target.result);
-                };
-                reader.readAsDataURL(archivoInput.files[0]);
-            } else {
-                guardarDatosFinales("");
-            }
+            Swal.fire({ icon: 'success', title: '¡Producto Guardado! ✨', text: 'El cosmético fue registrado con éxito.', confirmButtonColor: '#dca397' });
         }
 
         function confirmarEliminacion(id, nombreProducto) {
@@ -731,7 +715,7 @@
                     document.getElementById("modal-precio-prod").textContent = this.dataset.precio;
                     document.getElementById("modal-stock-prod").textContent = this.dataset.stock;
                     document.getElementById("modal-info-prod").textContent = this.dataset.info;
-                    
+                   
                     const imgProd = document.getElementById("modal-img-prod");
                     if (this.dataset.foto) {
                         imgProd.src = this.dataset.foto;
@@ -742,7 +726,6 @@
                     modal.style.display = "flex";
                 };
             });
-
             btnClose.onclick = () => modal.style.display = "none";
             window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
         }
@@ -752,12 +735,9 @@
             const inputCantidad = document.getElementById("cantidad");
             const valorBusqueda = inputBuscar.value.trim();
             const cantidad = parseInt(inputCantidad.value, 10) || 1;
-
             if (!valorBusqueda) return;
-
             const opciones = document.querySelectorAll("#lista_productos option");
             let productoEncontrado = null;
-
             opciones.forEach(opt => {
                 if (opt.value === valorBusqueda) {
                     productoEncontrado = {
@@ -768,17 +748,14 @@
                     };
                 }
             });
-
             if (!productoEncontrado) {
                 Swal.fire({ icon: 'error', title: 'No encontrado', text: 'Seleccioná un producto válido de la lista.', confirmButtonColor: '#dca397' });
                 return;
             }
-
             if (cantidad > productoEncontrado.stockMax) {
                 Swal.fire({ icon: 'warning', title: 'Stock insuficiente', text: `Solo hay ${productoEncontrado.stockMax} unidades disponibles.`, confirmButtonColor: '#dca397' });
                 return;
             }
-
             const existente = carritoVenta.find(item => item.id === productoEncontrado.id);
             if (existente) {
                 if (existente.cantidad + cantidad > productoEncontrado.stockMax) {
@@ -794,7 +771,6 @@
                     cantidad: cantidad
                 });
             }
-
             actualizarTablaCarrito();
             inputBuscar.value = "";
             inputCantidad.value = "1";
