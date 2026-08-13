@@ -1,16 +1,15 @@
-
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
-    line-height: 1.6; /* espacio entre líneas de todo el sitio */
+    line-height: 1.6;
 }
 
 body {
     background-color: #fcf6f5;
     color: #4a4a4a;
-    padding-bottom: 80px; /* Más espacio al final de la página */
+    padding-bottom: 80px;
 }
 
 /* Encabezado */
@@ -20,13 +19,13 @@ body {
     text-align: center;
     padding: 40px 20px; 
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    margin-bottom: 50px; /* separación con el contenido */
+    margin-bottom: 50px;
 }
 
 .main-header h1 {
     font-size: 2rem;
     font-weight: 600;
-    letter-spacing: 1px; /* Separación entre letras */
+    letter-spacing: 1px;
 }
 
 /* Contenedor Principal */
@@ -56,11 +55,131 @@ body {
 /* Tarjetas (Cards) */
 .card {
     background: #ffffff;
-    border-radius: 16px; /* Bordes suaves */
-    padding: 24px; /* padding interior */
+    border-radius: 16px;
+    padding: 24px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
     border: 1px solid #f0e4e2;
 }
+
+.card h2 {
+    font-size: 1.5rem;
+    color: #6b534c;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #fbf0ee;
+    padding-bottom: 15px;
+}
+
+/* Formularios */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 25px;
+    flex: 1;
+}
+
+.form-group label {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #7d6660;
+}
+
+.form-group input, .form-group select {
+    padding: 14px 18px;
+    border: 1px solid #ddd1cf;
+    border-radius: 10px;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+    width: 100%; /* Asegura que ocupen todo su contenedor */
+}
+
+.form-group input:focus, .form-group select:focus {
+    border-color: #f3d1cb;
+    box-shadow: 0 0 8px rgba(243, 209, 203, 0.6);
+}
+
+/* Filas del formulario */
+.form-group-row {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+    margin-bottom: 10px; 
+}
+
+/* Botón */
+.btn-submit {
+    background-color: #dca397;
+    color: white;
+    border: none;
+    padding: 16px 25px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.2s;
+    margin-top: 25px;
+    letter-spacing: 1px;
+}
+
+.btn-submit:hover {
+    background-color: #ca8f83;
+}
+
+/* Tablas */
+.table-responsive {
+    overflow-x: auto;
+    margin-top: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+    min-width: 500px; /* Evita que la tabla se comprima demasiado en celulares */
+}
+
+table th {
+    background-color: #fbf0ee;
+    color: #7d6660;
+    padding: 18px 20px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #f5ebe9;
+}
+
+table td {
+    padding: 18px 20px;
+    border-bottom: 1px solid #f5ebe9;
+}
+
+table tr:hover {
+    background-color: #fffaf9;
+}
+
+/* Etiquetas (Badges) */
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.badge-kbeauty {
+    background-color: #e4f0ec;
+    color: #3b7a66;
+}
+
+.badge-normal {
+    background-color: #eaeaea;
+    color: #666666;
+}
+
+
+/* =========================================
+   MEDIA QUERIES (ADAPTACIÓN MÓVIL)
+   ========================================= */
 
 @media (max-width: 1100px) {
     .top-row .card {
@@ -76,115 +195,38 @@ body {
     }
 }
 
-.card h2 {
-    font-size: 1.5rem; /* Título grande */
-    color: #6b534c;
-    margin-bottom: 30px; /* Mucha más separación con el formulario/tabla */
-    border-bottom: 2px solid #fbf0ee;
-    padding-bottom: 15px; /* Más padding en el borde inferior */
-}
+/* Ajustes finos para celulares y pantallas chicas */
+@media (max-width: 600px) {
+    .container {
+        padding: 0 15px; /* Menos margen a los lados en celulares */
+        gap: 25px;
+    }
 
-/* Formularios */
-.form-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 25px; /* Más espacio vertical entre grupos de input */
-    flex: 1;
-}
+    .main-header {
+        padding: 30px 15px;
+        margin-bottom: 30px;
+    }
 
-.form-group label {
-    font-size: 1rem; /* Label grande */
-    margin-bottom: 10px; /* separación label-input */
-    font-weight: 600;
-    color: #7d6660;
-}
+    .main-header h1 {
+        font-size: 1.6rem; /* Título un poco más chico para que no rompa */
+    }
 
-.form-group input, .form-group select {
-    padding: 14px 18px; /* Inputs grandes y cómodos */
-    border: 1px solid #ddd1cf;
-    border-radius: 10px; /* Bordes redondeados */
-    font-size: 1rem;
-    outline: none;
-    transition: all 0.3s ease;
-}
+    .card {
+        padding: 16px; /* Padding interno más compacto en pantallas pequeñas */
+    }
 
-.form-group input:focus, .form-group select:focus {
-    border-color: #f3d1cb;
-    box-shadow: 0 0 8px rgba(243, 209, 203, 0.6);
-}
+    .card h2 {
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+    }
 
-/* Filas del formulario */
-.form-group-row {
-    display: flex;
-    gap: 25px; /* separación horizontal entre inputs contiguos */
-    flex-wrap: wrap;
-    margin-bottom: 10px; 
-}
+    /* Los inputs que estaban en fila pasan a columna para que no se pisen */
+    .form-group-row {
+        flex-direction: column;
+        gap: 0;
+    }
 
-/* Botón */
-.btn-submit {
-    background-color: #dca397;
-    color: white;
-    border: none;
-    padding: 16px 25px; /* Botón  grande */
-    font-size: 1.1rem; /* Texto grande */
-    font-weight: 600;
-    border-radius: 10px;
-    cursor: pointer;
-    width: 100%;
-    transition: background-color 0.2s;
-    margin-top: 25px; /* Separación con el último input */
-    letter-spacing: 1px;
-}
-
-.btn-submit:hover {
-    background-color: #ca8f83;
-}
-
-/* Tablas */
-.table-responsive {
-    overflow-x: auto;
-    margin-top: 15px; /* Espacio arriba de la tabla */
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 1rem;
-}
-
-table th {
-    background-color: #fbf0ee;
-    color: #7d6660;
-    padding: 18px 20px; /* Aumento el padding en cabeceras */
-    text-align: left;
-    font-weight: 600;
-    border-bottom: 2px solid #f5ebe9;
-}
-
-table td {
-    padding: 18px 20px; /* Aumento el padding en las celdas de datos */
-    border-bottom: 1px solid #f5ebe9;
-}
-
-table tr:hover {
-    background-color: #fffaf9;
-}
-
-/* Etiquetas (Badges) */
-.badge {
-    padding: 6px 12px; /* Badges grandes */
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.badge-kbeauty {
-    background-color: #e4f0ec;
-    color: #3b7a66;
-}
-
-.badge-normal {
-    background-color: #eaeaea;
-    color: #666666;
+    .form-group input, .form-group select {
+        padding: 12px 14px; /* Inputs ligeramente más compactos pero accesibles */
+    }
 }
