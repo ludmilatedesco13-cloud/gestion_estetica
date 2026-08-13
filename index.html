@@ -324,7 +324,7 @@
             </form>
         </section>
 
-        <!-- Registrar Nuevo Cosmético -->
+        <!-- Registrar Nuevo Cosmético (Actualizado con enctype y input file) -->
         <section id="sec-nuevo-producto" class="card form-section">
             <h2>Registrar Nuevo Cosmético 💄</h2>
             <form id="form-nuevo-producto" action="guardar_producto.php" method="POST" enctype="multipart/form-data" onsubmit="guardarNuevoProducto(event)">
@@ -389,6 +389,7 @@
                     <textarea id="caracteristicas" name="caracteristicas" rows="3" placeholder="Ej: Hidratante, ideal para pieles sensibles..."></textarea>
                 </div>
 
+                <!-- Selector de archivos actualizado para subir foto -->
                 <div class="form-group">
                     <label for="foto">Foto del Producto</label>
                     <input type="file" id="foto" name="foto" accept="image/*">
@@ -715,7 +716,7 @@
                     document.getElementById("modal-precio-prod").textContent = this.dataset.precio;
                     document.getElementById("modal-stock-prod").textContent = this.dataset.stock;
                     document.getElementById("modal-info-prod").textContent = this.dataset.info;
-                   
+                    
                     const imgProd = document.getElementById("modal-img-prod");
                     if (this.dataset.foto) {
                         imgProd.src = this.dataset.foto;
@@ -726,6 +727,7 @@
                     modal.style.display = "flex";
                 };
             });
+
             btnClose.onclick = () => modal.style.display = "none";
             window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
         }
@@ -735,9 +737,12 @@
             const inputCantidad = document.getElementById("cantidad");
             const valorBusqueda = inputBuscar.value.trim();
             const cantidad = parseInt(inputCantidad.value, 10) || 1;
+
             if (!valorBusqueda) return;
+
             const opciones = document.querySelectorAll("#lista_productos option");
             let productoEncontrado = null;
+
             opciones.forEach(opt => {
                 if (opt.value === valorBusqueda) {
                     productoEncontrado = {
@@ -748,14 +753,17 @@
                     };
                 }
             });
+
             if (!productoEncontrado) {
                 Swal.fire({ icon: 'error', title: 'No encontrado', text: 'Seleccioná un producto válido de la lista.', confirmButtonColor: '#dca397' });
                 return;
             }
+
             if (cantidad > productoEncontrado.stockMax) {
                 Swal.fire({ icon: 'warning', title: 'Stock insuficiente', text: `Solo hay ${productoEncontrado.stockMax} unidades disponibles.`, confirmButtonColor: '#dca397' });
                 return;
             }
+
             const existente = carritoVenta.find(item => item.id === productoEncontrado.id);
             if (existente) {
                 if (existente.cantidad + cantidad > productoEncontrado.stockMax) {
@@ -771,6 +779,7 @@
                     cantidad: cantidad
                 });
             }
+
             actualizarTablaCarrito();
             inputBuscar.value = "";
             inputCantidad.value = "1";
