@@ -149,6 +149,7 @@
             transition: all 0.3s ease;
             font-family: 'Poppins', sans-serif;
             background-color: #fff;
+            width: 100%; /* Asegura que no desborden en pantallas chicas */
         }
 
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
@@ -188,12 +189,14 @@
         .table-responsive {
             overflow-x: auto;
             margin-top: 15px; /* Espacio arriba de la tabla */
+            -webkit-overflow-scrolling: touch; /* Suaviza el scroll en celulares */
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: 1rem;
+            min-width: 500px; /* Evita que se compacte demasiado en pantallas chicas */
         }
 
         table th {
@@ -235,22 +238,49 @@
         /* Estilos adicionales de la app (Botones de acción, carrito, modal) */
         .btn-icon { font-size: 1.2rem; text-decoration: none; margin-right: 8px; display: inline-block; transition: transform 0.2s; cursor: pointer; }
         .btn-icon:hover { transform: scale(1.2); }
-        .venta-tabla { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; }
+        .venta-tabla { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 15px; min-width: 450px; }
         .venta-tabla th, .venta-tabla td { border: 1px solid #f5ebe9; padding: 12px 15px; text-align: left; }
         .venta-tabla th { background-color: #fffaf9; color: #7d6660; }
         .total-box { font-size: 1.4rem; font-weight: 600; color: #6b534c; text-align: right; margin-top: 15px; padding: 12px 15px; background: #fffaf9; border-radius: 8px; border: 1px solid #f0e4e2; }
-        .row-agregar { display: flex; gap: 15px; align-items: flex-end; margin-bottom: 15px; }
-        .btn-agregar-lista { background-color: #dca397; color: white; border: none; padding: 14px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: background 0.3s; height: 52px; font-size: 1rem; }
+        .row-agregar { display: flex; gap: 15px; align-items: flex-end; margin-bottom: 15px; flex-wrap: wrap; }
+        .btn-agregar-lista { background-color: #dca397; color: white; border: none; padding: 14px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: background 0.3s; height: 52px; font-size: 1rem; white-space: nowrap; }
         .btn-agregar-lista:hover { background-color: #ca8f83; }
 
         /* Modal */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center; }
-        .modal-content { background-color: white; padding: 25px; border-radius: 16px; max-width: 450px; width: 90%; box-shadow: 0 6px 20px rgba(0,0,0,0.15); position: relative; text-align: center; border: 1px solid #f0e4e2; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center; padding: 15px; }
+        .modal-content { background-color: white; padding: 25px; border-radius: 16px; max-width: 450px; width: 100%; box-shadow: 0 6px 20px rgba(0,0,0,0.15); position: relative; text-align: center; border: 1px solid #f0e4e2; max-height: 90vh; overflow-y: auto; }
         .close-modal { position: absolute; top: 12px; right: 18px; font-size: 1.5rem; cursor: pointer; color: #7d6660; font-weight: bold; }
         .modal-img { max-width: 140px; height: 140px; border-radius: 8px; margin-bottom: 15px; background: #eee; display: block; margin-left: auto; margin-right: auto; object-fit: cover; border: 1px solid #f0e4e2; }
         .modal-scroll-caracteristicas { width: 100%; max-height: 130px; overflow-y: auto; background-color: #fcf9f8; padding: 12px; border-radius: 8px; border: 1px solid #e6dbd8; box-sizing: border-box; text-align: left; margin-top: 8px; font-size: 0.95rem; line-height: 1.5; color: #4a3f3c; white-space: pre-line; }
         .badge-categoria { background-color: #f3d1cb; color: #7d6660; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; display: inline-block; }
         .subcategoria-texto { color: #8a736d; font-size: 0.8rem; display: block; margin-top: 3px; }
+
+        /* Media Queries adicionales para optimización móvil completa */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+                gap: 30px;
+            }
+            .main-header {
+                padding: 30px 15px;
+                margin-bottom: 30px;
+            }
+            .main-header h1 {
+                font-size: 1.6rem;
+            }
+            .form-group-row {
+                gap: 15px;
+            }
+            .row-agregar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn-agregar-lista {
+                width: 100%;
+                height: auto;
+                padding: 14px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -271,17 +301,17 @@
         <section id="sec-resumen" class="card stats-section">
             <h2>Resumen del Negocio 📈</h2>
             <div class="form-group-row" style="justify-content: space-around; text-align: center; margin-bottom: 0;">
-                <div style="flex: 1; padding: 10px;">
+                <div style="flex: 1; padding: 10px; min-width: 120px;">
                     <p style="font-size: 0.9rem; color: #7d6660; font-weight: 600;">Total de Ventas Registradas</p>
                     <span id="stat-total-ventas" style="font-size: 1.8rem; font-weight: 600; color: #7a9e9f;">0</span>
                 </div>
 
-                <div style="flex: 1; padding: 10px; border-left: 1px solid #f5ebe9; border-right: 1px solid #f5ebe9;">
+                <div style="flex: 1; padding: 10px; border-left: 1px solid #f5ebe9; border-right: 1px solid #f5ebe9; min-width: 120px;">
                     <p style="font-size: 0.9rem; color: #7d6660; font-weight: 600;">Caja Total Recaudada</p>
                     <span id="stat-caja-total" style="font-size: 1.8rem; font-weight: 600; color: #6b534c;">$0</span>
                 </div>
 
-                <div style="flex: 1; padding: 10px;">
+                <div style="flex: 1; padding: 10px; min-width: 120px;">
                     <p style="font-size: 0.9rem; color: #7d6660; font-weight: 600;">Productos Sin Stock</p>
                     <span id="stat-sin-stock" style="font-size: 1.8rem; font-weight: 600; color: #dca397;">0</span>
                 </div>
@@ -293,11 +323,11 @@
             <h2>Registrar Nueva Venta 🛍️</h2>
             <form id="form-ventas-multiples" onsubmit="registrarVentaLocal(event)">
                 <div class="row-agregar">
-                    <div class="form-group" style="flex: 2; margin-bottom: 0;">
+                    <div class="form-group" style="flex: 2; margin-bottom: 0; min-width: 200px;">
                         <label for="producto_buscar">Buscar Producto (Nombre o marca)</label>
                         <input type="text" id="producto_buscar" list="lista_productos" placeholder="Escribí para buscar... Ej: COSRX" autocomplete="off">
                     </div>
-                    <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                    <div class="form-group" style="flex: 1; margin-bottom: 0; min-width: 100px;">
                         <label for="cantidad">Cantidad</label>
                         <input type="number" id="cantidad" min="1" value="1">
                     </div>
@@ -705,7 +735,7 @@
             actualizarTablaCarrito();
             renderizarSistema();
 
-            Swal.fire({ icon: 'success', title: '¡Venta Registrada! 🎉', text: 'Stock actualizado con éxito.', confirmButtonColor: '#dca397' });
+            Swal.fire({ icon: 'success', title: '¡Venta Registrada! 🛍️', text: 'La operación se completó con éxito.', confirmButtonColor: '#dca397' });
         }
 
         function vincularModalEventos() {
@@ -713,73 +743,87 @@
             const btnClose = document.getElementById("btn-close-modal");
 
             document.querySelectorAll(".btn-ver").forEach(btn => {
-                btn.onclick = function(e) {
+                btn.onclick = (e) => {
                     e.preventDefault();
-                    document.getElementById("modal-titulo-prod").textContent = this.dataset.nombre;
-                    document.getElementById("modal-marca-prod").textContent = this.dataset.marca || 'N/A';
-                    document.getElementById("modal-precio-prod").textContent = this.dataset.precio;
-                    document.getElementById("modal-stock-prod").textContent = this.dataset.stock;
-                    document.getElementById("modal-info-prod").textContent = this.dataset.info;
-                    document.getElementById("modal-img-prod").src = this.dataset.foto || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 24 24" fill="none" stroke="%23dca397" stroke-width="1"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>';
+                    document.getElementById("modal-titulo-prod").textContent = btn.dataset.nombre;
+                    document.getElementById("modal-marca-prod").textContent = btn.dataset.marca || "Sin marca";
+                    document.getElementById("modal-precio-prod").textContent = btn.dataset.precio;
+                    document.getElementById("modal-stock-prod").textContent = btn.dataset.stock;
+                    document.getElementById("modal-info-prod").textContent = btn.dataset.info;
+                    
+                    const imgProd = document.getElementById("modal-img-prod");
+                    if (btn.dataset.foto) {
+                        imgProd.src = btn.dataset.foto;
+                        imgProd.style.display = "block";
+                    } else {
+                        imgProd.style.display = "none";
+                    }
+
                     modal.style.display = "flex";
                 };
             });
 
-            if (btnClose) btnClose.onclick = () => modal.style.display = "none";
+            btnClose.onclick = () => { modal.style.display = "none"; };
             window.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; };
         }
 
-        document.addEventListener("DOMContentLoaded", function() {
-            inicializarDatos();
-            renderizarSistema();
-
-            const btnAgregar = document.getElementById("btn-agregar-item");
+        document.getElementById("btn-agregar-item").onclick = () => {
             const inputBuscar = document.getElementById("producto_buscar");
             const inputCantidad = document.getElementById("cantidad");
+            const valBusqueda = inputBuscar.value.trim();
+            const cantidad = parseInt(inputCantidad.value, 10) || 1;
 
-            if (btnAgregar) {
-                btnAgregar.addEventListener("click", function() {
-                    const valorIngresado = inputBuscar.value.trim();
-                    const cantidadIngresada = parseInt(inputCantidad.value, 10);
-                    
-                    if (!valorIngresado || isNaN(cantidadIngresada) || cantidadIngresada <= 0) {
-                        Swal.fire({ icon: 'warning', title: 'Atención', text: 'Seleccioná un producto y cantidad válida.', confirmButtonColor: '#dca397' });
-                        return;
-                    }
+            if (!valBusqueda) return;
 
-                    const datalist = document.getElementById("lista_productos");
-                    const opcion = Array.from(datalist.options).find(opt => opt.value === valorIngresado);
+            const opciones = document.querySelectorAll("#lista_productos option");
+            let prodEncontrado = null;
 
-                    if (!opcion) {
-                        Swal.fire({ icon: 'error', title: 'No encontrado', text: 'Seleccioná un producto de la lista desplegable.', confirmButtonColor: '#dca397' });
-                        return;
-                    }
+            opciones.forEach(opt => {
+                if (opt.value === valBusqueda) {
+                    prodEncontrado = {
+                        id: parseInt(opt.dataset.id, 10),
+                        nombre: opt.value,
+                        precio: parseFloat(opt.dataset.precio),
+                        stock: parseInt(opt.dataset.stock, 10)
+                    };
+                }
+            });
 
-                    const id = parseInt(opcion.dataset.id, 10);
-                    const stockDisponible = parseInt(opcion.dataset.stock, 10);
-                    const precio = parseFloat(opcion.dataset.precio);
+            if (!prodEncontrado) {
+                Swal.fire({ icon: 'error', title: 'No encontrado', text: 'Seleccioná un producto válido de la lista.', confirmButtonColor: '#dca397' });
+                return;
+            }
 
-                    const itemExistente = carritoVenta.find(prod => prod.id === id);
-                    const cantidadPrevios = itemExistente ? itemExistente.cantidad : 0;
+            if (cantidad > prodEncontrado.stock) {
+                Swal.fire({ icon: 'warning', title: 'Stock insuficiente', text: `Solo quedan ${prodEncontrado.stock} unidades disponibles.`, confirmButtonColor: '#dca397' });
+                return;
+            }
 
-                    if ((cantidadPrevios + cantidadIngresada) > stockDisponible) {
-                        Swal.fire({ icon: 'warning', title: 'Stock insuficiente', text: `Disponibles: ${stockDisponible} u.`, confirmButtonColor: '#dca397' });
-                        return;
-                    }
-
-                    if (itemExistente) {
-                        itemExistente.cantidad += cantidadIngresada;
-                    } else {
-                        carritoVenta.push({ id: id, nombre: valorIngresado, precio: precio, cantidad: cantidadIngresada });
-                    }
-
-                    actualizarTablaCarrito();
-                    inputBuscar.value = "";
-                    inputCantidad.value = 1;
-                    inputBuscar.focus();
+            const existente = carritoVenta.find(item => item.id === prodEncontrado.id);
+            if (existente) {
+                if (existente.cantidad + cantidad > prodEncontrado.stock) {
+                    Swal.fire({ icon: 'warning', title: 'Stock insuficiente', text: 'No podés agregar más unidades que el stock disponible.', confirmButtonColor: '#dca397' });
+                    return;
+                }
+                existente.cantidad += cantidad;
+            } else {
+                carritoVenta.push({
+                    id: prodEncontrado.id,
+                    nombre: prodEncontrado.nombre,
+                    precio: prodEncontrado.precio,
+                    cantidad: cantidad
                 });
             }
-        });
+
+            actualizarTablaCarrito();
+            inputBuscar.value = "";
+            inputCantidad.value = "1";
+        };
+
+        window.onload = () => {
+            inicializarDatos();
+            renderizarSistema();
+        };
     </script>
 </body>
 </html>
