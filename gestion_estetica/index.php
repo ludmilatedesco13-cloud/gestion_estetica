@@ -10,7 +10,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     
-    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
@@ -20,19 +19,19 @@
         .venta-tabla th, .venta-tabla td { border: 1px solid #f5ebe9; padding: 10px; text-align: left; }
         .venta-tabla th { background-color: #fffaf9; color: #7d6660; }
         .total-box { font-size: 1.4rem; font-weight: 600; color: #6b534c; text-align: right; margin-top: 10px; padding: 10px; background: #fffaf9; border-radius: 8px; }
-        .row-agregar { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 15px; }
-        .btn-agregar-lista { background-color: #dca397; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
+        .row-agregar { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 15px; flex-wrap: wrap; }
+        .btn-agregar-lista { background-color: #dca397; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.3s; width: 100%; }
         .btn-agregar-lista:hover { background-color: #c98e82; }
 
         /* Navigation Header Bar */
-        .main-header { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 10px; }
-        .header-nav { margin-top: 10px; display: flex; gap: 15px; }
-        .header-nav a { color: #7d6660; text-decoration: none; font-weight: 600; font-size: 0.95rem; padding: 5px 12px; border-radius: 15px; background-color: #fffaf9; border: 1px solid #f3d1cb; transition: all 0.2s; }
+        .main-header { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px 15px; }
+        .header-nav { margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        .header-nav a { color: #7d6660; text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 6px 14px; border-radius: 15px; background-color: #fffaf9; border: 1px solid #f3d1cb; transition: all 0.2s; }
         .header-nav a:hover { background-color: #f3d1cb; color: #fff; }
         
         /* Modal para la lupita */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center; }
-        .modal-content { background-color: white; padding: 20px; border-radius: 12px; max-width: 450px; width: 90%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; text-align: center; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); justify-content: center; align-items: center; padding: 15px; box-sizing: border-box; }
+        .modal-content { background-color: white; padding: 20px; border-radius: 12px; max-width: 450px; width: 100%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; text-align: center; }
         .close-modal { position: absolute; top: 10px; right: 15px; font-size: 1.5rem; cursor: pointer; color: #7d6660; }
         .modal-img { max-width: 150px; height: auto; border-radius: 8px; margin-bottom: 15px; background: #eee; display: block; margin-left: auto; margin-right: auto; object-fit: cover; }
 
@@ -60,6 +59,38 @@
 
         .badge-categoria { background-color: #f3d1cb; color: #7d6660; padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; display: inline-block; }
         .subcategoria-texto { color: #8a736d; font-size: 0.8rem; display: block; margin-top: 2px; }
+
+        /* Estilos adaptativos para el resumen del negocio */
+        .resumen-grid {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            gap: 15px;
+        }
+        .resumen-item {
+            flex: 1;
+            padding: 10px;
+        }
+        .resumen-item.mid {
+            border-left: 1px solid #f5ebe9;
+            border-right: 1px solid #f5ebe9;
+        }
+
+        @media (max-width: 600px) {
+            .row-agregar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .resumen-grid {
+                flex-direction: column;
+            }
+            .resumen-item.mid {
+                border-left: none;
+                border-right: none;
+                border-top: 1px solid #f5ebe9;
+                border-bottom: 1px solid #f5ebe9;
+            }
+        }
     </style>
 </head>
 <body>
@@ -103,28 +134,26 @@
         $color_alerta = $sin_stock > 0 ? '#b81212' : '#dca397';
         ?>
 
-        <!-- Resumen del Negocio -->
         <section id="sec-resumen" class="card stats-section" style="background-color: #fffaf9; border-color: #f3d1cb;">
             <h2>Resumen del Negocio 📈</h2>
-            <div class="form-group-row" style="justify-content: space-around; text-align: center;">
-                <div style="flex: 1; padding: 10px;">
+            <div class="resumen-grid">
+                <div class="resumen-item">
                     <p style="font-size: 0.9rem; color: #7d6660; font-weight: 600;">Total de Ventas Registradas</p>
                     <span style="font-size: 1.8rem; font-weight: 600; color: #7a9e9f;"><?php echo $cant_ventas; ?></span>
                 </div>
 
-                <div style="flex: 1; padding: 10px; border-left: 1px solid #f5ebe9; border-right: 1px solid #f5ebe9;">
+                <div class="resumen-item mid">
                     <p style="font-size: 0.9rem; color: #7d6660; font-weight: 600;">Caja Total Recaudada</p>
                     <span style="font-size: 1.8rem; font-weight: 600; color: #6b534c;">$<?php echo $caja_total_formateada; ?></span>
                 </div>
 
-                <div style="flex: 1; padding: 10px;">
+                <div class="resumen-item">
                     <p style="font-size: 0.9rem; color: #7d6660; font-weight: 600;">Productos Sin Stock</p>
                     <span style="font-size: 1.8rem; font-weight: 600; color: <?php echo $color_alerta; ?>;"><?php echo $sin_stock; ?></span>
                 </div>
             </div>
         </section>
 
-        <!-- Registrar Nueva Venta -->
         <section id="sec-venta" class="card sales-section">
             <h2>Registrar Nueva Venta 🛍️</h2>
             <form action="registrar_venta.php" method="POST" id="form-ventas-multiples">
@@ -137,7 +166,9 @@
                         <label for="cantidad">Cantidad</label>
                         <input type="number" id="cantidad" min="1" value="1">
                     </div>
-                    <button type="button" id="btn-agregar-item" class="btn-agregar-lista">Añadir</button>
+                    <div style="flex: 0 1 auto; align-self: flex-end;">
+                        <button type="button" id="btn-agregar-item" class="btn-agregar-lista">Añadir</button>
+                    </div>
                 </div>
 
                 <datalist id="lista_productos">
@@ -155,18 +186,20 @@
                     ?>
                 </datalist>
 
-                <table class="venta-tabla" id="tabla-carrito">
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Precio Unitario</th>
-                            <th>Cantidad</th>
-                            <th>Total</th>
-                            <th>Quitar</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="venta-tabla" id="tabla-carrito">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Precio Unitario</th>
+                                <th>Cantidad</th>
+                                <th>Total</th>
+                                <th>Quitar</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
 
                 <div class="total-box">
                     Total Operación: $<span id="monto-total-venta">0</span>
@@ -177,7 +210,6 @@
             </form>
         </section>
 
-        <!-- Registrar Nuevo Cosmético -->
         <section id="sec-nuevo-producto" class="card form-section">
             <h2>Registrar Nuevo Cosmético 💄</h2>
             <form action="guardar_producto.php" method="POST" enctype="multipart/form-data" id="form-nuevo-producto">
@@ -239,7 +271,7 @@
 
                 <div class="form-group">
                     <label for="caracteristicas">Características / Descripción detallada</label>
-                    <textarea id="caracteristicas" name="caracteristicas" rows="3" placeholder="Ej: Hidratante, ideal para pieles sensibles, contiene extracto de centella asiática..." style="width: 100%; padding: 10px; border: 1px solid #f3d1cb; border-radius: 8px; font-family: 'Poppins', sans-serif; resize: vertical;"></textarea>
+                    <textarea id="caracteristicas" name="caracteristicas" rows="3" placeholder="Ej: Hidratante, ideal para pieles sensibles, contiene extracto de centella asiática..." style="width: 100%; padding: 14px 18px; border: 1px solid #ddd1cf; border-radius: 10px; font-family: 'Poppins', sans-serif; resize: vertical; outline: none; font-size: 1rem;"></textarea>
                 </div>
 
                 <div class="form-group">
@@ -251,7 +283,6 @@
             </form>
         </section>
 
-        <!-- Inventario Actual -->
         <section id="sec-inventario" class="card table-section">
             <h2>Inventario Actual 📦</h2>
             <div class="table-responsive">
@@ -314,11 +345,10 @@
         </section>
     </div>
 
-    <!-- Modal Detalles -->
     <div id="modal-detalles" class="modal">
         <div class="modal-content">
             <span class="close-modal" id="btn-close-modal">&times;</span>
-            <h2 id="modal-titulo-prod">Nombre Producto</h2>
+            <h2 id="modal-titulo-prod" style="font-size: 1.3rem; margin-bottom: 15px;">Nombre Producto</h2>
             <img id="modal-img-prod" src="" alt="Foto del Producto" class="modal-img">
             <p><strong>Marca:</strong> <span id="modal-marca-prod"></span></p>
             <p><strong>Precio Venta:</strong> $<span id="modal-precio-prod"></span></p>
@@ -425,7 +455,7 @@
         // Inicialización tras cargar el DOM
         document.addEventListener("DOMContentLoaded", function() {
             
-            // --- EVENT LISTENER PARA BOTÓN AÑADIR VENTA ---
+            // --- EVENT LISTENER PARA BOTÓN AÑADIR VENTA ---
             const btnAgregar = document.getElementById("btn-agregar-item");
             const inputBuscar = document.getElementById("producto_buscar");
             const inputCantidad = document.getElementById("cantidad");
